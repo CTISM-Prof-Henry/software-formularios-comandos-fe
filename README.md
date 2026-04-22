@@ -1,3 +1,89 @@
+##  Diagrama UML
+```mermaid
+classDiagram
+    direction TB
+
+    class Usuario {
+        - id : UUID
+        - keycloakId : String
+        - matricula : String
+        - nome : String
+        - email : String
+        - perfilAcesso : String
+        - cadastroCompleto : boolean
+        + processarToken() : boolean
+    }
+
+    class Unidade {
+        - id : UUID
+        - sigla : String
+        - nome : String
+        - tipoUnidade : String
+        - unidadePai : UUID
+    }
+
+    class PlanoPDI {
+        - id : UUID
+        - desafio : String
+        - objetivo : String
+    }
+
+    class Macroprocesso {
+        - id : UUID
+        - descricao : String
+    }
+
+    class Risco {
+        - id : UUID
+        - eventoRisco : String
+        - tipologia : String
+        - causas : List~String~
+        - consequencias : List~String~
+    }
+
+    class Avaliacao {
+        - id : UUID
+        - probabilidade : int
+        - impacto : int
+        - riscoCalculado : int
+        - nivelRiscoInicial : String
+        - controlesInternos : List~String~
+        - eficaciaControles : String
+        - riscoResidual : int
+        - nivelRiscoResidual : String
+        + calcularRiscoInicial() : int
+        + calcularRiscoResidual() : int
+    }
+
+    class Tratamento {
+        - id : UUID
+        - tipoResposta : String
+        - tipoAcao : String
+        - descricaoAcao : String
+        - responsavel : String
+        - parceiros : String
+        - dataInicio : Date
+        - dataFim : Date
+        - situacao : String
+        - observacoes : String
+    }
+
+    class Monitoramento {
+        - id : UUID
+        - resultados : String
+        - acoesFuturas : String
+        - analiseCritica : String
+    }
+
+    Usuario "1..*" -- "1" Unidade
+    Unidade "1" -- "0..*" Risco
+    PlanoPDI "1" -- "0..*" Risco
+    Macroprocesso "1" -- "0..*" Risco
+    Risco "1" *-- "1" Avaliacao
+    Risco "1" *-- "0..1" Tratamento
+    Tratamento "1" *-- "0..*" Monitoramento
+```
+
 # Título do repositório
 
 Descrição curta do repositório.
