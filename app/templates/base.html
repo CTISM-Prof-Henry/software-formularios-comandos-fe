@@ -1,0 +1,30 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Comandos FE{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/app.css' %}">
+</head>
+<body>
+    <div class="shell">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-mark">
+                    <div class="brand-name">Comandos FE</div>
+                </div>
+            </div>
+            <nav class="nav-links">
+                <a class="{% if request.path == '/' %}active{% endif %}" href="/">Pagina Inicial</a>
+                <a class="{% if request.path == '/unidades/' %}active{% endif %}" href="/unidades/">Unidades</a>
+                <a class="{% if request.path == '/usuarios/' %}active{% endif %}" href="/usuarios/">Usuarios</a>
+            </nav>
+            <div class="sidebar-spacer"></div>
+        </aside>
+        <main class="content">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+</body>
+</html>

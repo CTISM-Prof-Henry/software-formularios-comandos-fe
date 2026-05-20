@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+<div class="page-head">
+    <div>
+        <h1>{{ page_title }}</h1>
+        {% if page_description %}
+        <p class="muted">{{ page_description }}</p>
+        {% endif %}
+    </div>
+    {% if create_url %}
+    <a class="btn" href="{{ create_url }}">{{ create_label|default:"Novo" }}</a>
+    {% endif %}
+</div>
+
+<div class="card">
+    {% if objects %}
+        <div class="list-stack">
+        {% for obj in objects %}
+        <div class="list-item">
+            <div>
+                <strong>{{ obj }}</strong>
+            </div>
+            <div class="actions">
+                <a class="btn btn-secondary" href="{% url update_name obj.pk %}">Editar</a>
+                <a class="btn btn-danger" href="{% url delete_name obj.pk %}">Excluir</a>
+            </div>
+        </div>
+        {% endfor %}
+        </div>
+    {% else %}
+        <p class="muted empty-state">Nenhum registro.</p>
+    {% endif %}
+</div>
+{% endblock %}

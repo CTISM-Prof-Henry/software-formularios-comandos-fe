@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+<div class="page-head">
+    <div>
+        <h1>{{ page_title }}</h1>
+        {% if page_description %}
+        <p class="muted">{{ page_description }}</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card">
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="actions">
+            <button class="btn" type="submit">{{ submit_label|default:"Salvar" }}</button>
+            <a class="btn btn-secondary" href="{{ cancel_url|default:'javascript:history.back()' }}">Voltar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
