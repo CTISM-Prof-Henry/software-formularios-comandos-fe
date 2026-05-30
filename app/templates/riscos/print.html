@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Analise de Riscos | PDF{% endblock %}
+
+{% block content %}
+<div class="print-toolbar actions">
+    <a class="btn btn-secondary" href="{% url 'risco-list' %}">Voltar</a>
+    <button class="btn" type="button" onclick="window.print()">Imprimir/Salvar PDF</button>
+</div>
+
+<article class="print-sheet">
+    <header class="print-header">
+        <h1>Analise de Riscos</h1>
+        <p class="muted">Ficha gerada apos cadastro do risco.</p>
+    </header>
+
+    <section class="print-section">
+        <h2>1. Identificacao e Analise</h2>
+        <dl class="print-grid">
+            <div><dt>Setor/Departamento</dt><dd>{{ risco.unidade }}</dd></div>
+            <div><dt>Adicionado por</dt><dd>{{ risco.criado_por_display }}</dd></div>
+            <div><dt>Tipo de risco</dt><dd>{{ risco.get_tipo_risco_display }}</dd></div>
+            <div><dt>Desafio</dt><dd>{{ risco.desafio }}</dd></div>
+            <div><dt>Objetivo</dt><dd>{{ risco.objetivo }}</dd></div>
+            <div><dt>Macroprocesso</dt><dd>{{ risco.macroprocesso }}</dd></div>
+            <div><dt>Risco identificado</dt><dd>{{ risco.risco_identificado }}</dd></div>
+        </dl>
+    </section>
+
+    <section class="print-section">
+        <h2>2. Avaliacao</h2>
+        <dl class="print-grid">
+            <div><dt>Probabilidade</dt><dd>{{ risco.get_probabilidade_display }}</dd></div>
+            <div><dt>Impacto</dt><dd>{{ risco.get_impacto_display }}</dd></div>
+            <div><dt>Nivel de risco</dt><dd>{{ risco.nivel_risco }}</dd></div>
+            <div><dt>Eficacia dos controles internos</dt><dd>{{ risco.get_eficacia_controles_display }}</dd></div>
+            <div><dt>Nivel residual</dt><dd>{{ risco.nivel_residual }}</dd></div>
+        </dl>
+    </section>
+
+    <section class="print-section">
+        <h2>3. Tratamento</h2>
+        <dl class="print-grid">
+            <div><dt>Resposta</dt><dd>{{ risco.get_resposta_display }}</dd></div>
+            <div><dt>Acao</dt><dd>{{ risco.get_acao_display }}</dd></div>
+            <div><dt>Data inicio</dt><dd>{{ risco.data_inicio|date:"d/m/Y" }}</dd></div>
+            <div><dt>Data fim</dt><dd>{{ risco.data_fim|date:"d/m/Y" }}</dd></div>
+            <div><dt>Situacao</dt><dd>{{ risco.get_situacao_display }}</dd></div>
+        </dl>
+    </section>
+</article>
+{% endblock %}

@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "usuarios",
     "unidades",
+    "riscos",
 ]
 
 MIDDLEWARE = [
@@ -73,3 +74,5 @@ STATICFILES_DIRS = [
 ]
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+SIMULATED_USER_EMAIL = os.getenv("SIMULATED_USER_EMAIL", "fulano@gmail.com")

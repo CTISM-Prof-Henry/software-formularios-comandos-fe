@@ -123,9 +123,59 @@ sudo apt-get install nano
 Descreva aqui o passo-a-passo que outros usuários precisam realizar para conseguir executar com sucesso o código-fonte
 deste projeto:
 
-```bash
-echo "olá mundo!"
+```No PowerShell:
+cd D:\repositorios\comandos-fe\app
 ```
+
+Se ainda não tiver ambiente virtual:
+```Se ainda não tiver ambiente virtual:
+python -m venv .venv
+```
+
+Ativa o ambiente:
+```Ativa o ambiente:
+..venv\Scripts\Activate.ps1
+```
+
+Instala as dependências:
+```Instala as dependências:
+pip install -r requirements.txt
+```
+
+Cria o .env:
+```Cria o .env:
+Copy-Item .env.example .env
+```
+
+Roda as migrations:
+```Roda as migrations:
+python manage.py migrate
+```
+
+Sobe o sistema:
+```Sobe o sistema:
+python manage.py runserver
+```
+
+## Testes
+
+Executar os testes:
+```Executar os testes<comandos-fe\app> 
+.\.venv\Scripts\python.exe -m pytest app\tests -v
+```
+
+## Lint (Pylint)
+
+Instalar Pylint:
+```Instalar Pylint
+.\.venv\Scripts\python.exe -m pip install pylint
+```
+
+Executar Pylint:
+```Executar Pylint
+.\.venv\Scripts\python.exe -m pylint app -f colorized
+```
+(Última nota do Pylint: 8.59)
 
 ## Contato
 

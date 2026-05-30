@@ -36,5 +36,5 @@ class UnidadeDeleteView(CrudDeleteView):
     model = Unidade
     success_url = reverse_lazy("unidade-list")
     page_title = "Excluir Unidade"
-    page_description = "Confirme a exclusão da unidade."
+    page_description = "Confirme a exclusao da unidade."
     cancel_url_name = "unidade-list"

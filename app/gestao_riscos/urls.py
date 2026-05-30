@@ -10,4 +10,5 @@ urlpatterns = [
     path("health/", healthcheck, name="healthcheck"),
     path("usuarios/", include("usuarios.urls")),
     path("unidades/", include("unidades.urls")),
+    path("riscos/", include("riscos.urls")),
 ]

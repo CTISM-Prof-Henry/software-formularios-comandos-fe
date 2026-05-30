@@ -1,7 +1,9 @@
 import pytest
 from django.urls import reverse
+
 from unidades.forms import UnidadeForm
 from unidades.models import TipoUnidade, Unidade
+
 
 @pytest.mark.django_db
 def test_str_retorna_sigla_e_nome_da_unidade():
@@ -41,7 +43,7 @@ def test_listagem_exibe_unidades_cadastradas(client):
 def test_cria_nova_unidade_com_sucesso(client):
     dados_da_requisicao = {
         "sigla": "CCSH",
-        "nome": "Centro de Ciências Sociais e Humanas",
+        "nome": "Centro de Ciencias Sociais e Humanas",
         "tipo_unidade": TipoUnidade.DIRETORIA,
     }
 

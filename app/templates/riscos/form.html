@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+<div class="risk-form-shell">
+    <div class="page-head risk-form-head">
+        <div>
+            <h1>{{ page_title }}</h1>
+            {% if page_description %}
+            <p class="muted">{{ page_description }}</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <form method="post" class="risk-form">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+
+        <section class="risk-section">
+            <h2>1. Identificacao e Analise</h2>
+            <div class="form-grid two">
+                <div class="field">{{ form.unidade.label_tag }}{{ form.unidade }}{{ form.unidade.errors }}</div>
+                <div class="field">{{ form.tipo_risco.label_tag }}{{ form.tipo_risco }}{{ form.tipo_risco.errors }}</div>
+            </div>
+            <div class="form-grid three">
+                <div class="field">{{ form.desafio.label_tag }}{{ form.desafio }}{{ form.desafio.errors }}</div>
+                <div class="field">{{ form.objetivo.label_tag }}{{ form.objetivo }}{{ form.objetivo.errors }}</div>
+                <div class="field">{{ form.macroprocesso.label_tag }}{{ form.macroprocesso }}{{ form.macroprocesso.errors }}</div>
+            </div>
+            <div class="field">{{ form.risco_identificado.label_tag }}{{ form.risco_identificado }}{{ form.risco_identificado.errors }}</div>
+        </section>
+
+        <section class="risk-section">
+            <h2>2. Avaliacao</h2>
+            <div class="form-grid two">
+                <div class="field">{{ form.probabilidade.label_tag }}{{ form.probabilidade }}{{ form.probabilidade.errors }}</div>
+                <div class="field">{{ form.impacto.label_tag }}{{ form.impacto }}{{ form.impacto.errors }}</div>
+            </div>
+            <div class="readonly-grid">
+                <div class="field">
+                    <label>Nivel de risco</label>
+                    <input type="text" value="{% if object %}{{ object.nivel_risco }}{% else %}Calculado automaticamente{% endif %}" disabled>
+                </div>
+            </div>
+            <div class="field">{{ form.eficacia_controles.label_tag }}{{ form.eficacia_controles }}{{ form.eficacia_controles.errors }}</div>
+            <div class="readonly-grid">
+                <div class="field">
+                    <label>Nivel residual</label>
+                    <input type="text" value="{% if object %}{{ object.nivel_residual }}{% else %}Calculado automaticamente{% endif %}" disabled>
+                </div>
+            </div>
+        </section>
+
+        <section class="risk-section">
+            <h2>3. Tratamento</h2>
+            <div class="form-grid two">
+                <div class="field">{{ form.resposta.label_tag }}{{ form.resposta }}{{ form.resposta.errors }}</div>
+                <div class="field">{{ form.acao.label_tag }}{{ form.acao }}{{ form.acao.errors }}</div>
+                <div class="field">{{ form.data_inicio.label_tag }}{{ form.data_inicio }}{{ form.data_inicio.errors }}</div>
+                <div class="field">{{ form.data_fim.label_tag }}{{ form.data_fim }}{{ form.data_fim.errors }}</div>
+                <div class="field">{{ form.situacao.label_tag }}{{ form.situacao }}{{ form.situacao.errors }}</div>
+            </div>
+        </section>
+
+        <div class="actions form-actions-right">
+            <a class="btn btn-secondary" href="{{ cancel_url }}">Cancelar</a>
+            <button class="btn" type="submit">{{ submit_label }}</button>
+        </div>
+    </form>
+</div>
+{{ objetivos_por_desafio|json_script:"objetivos-data" }}
+<script>
+    (function () {
+        var desafio = document.getElementById("id_desafio");
+        var objetivo = document.getElementById("id_objetivo");
+        var dataElement = document.getElementById("objetivos-data");
+
+        if (!desafio || !objetivo || !dataElement) {
+            return;
+        }
+
+        var objetivos = JSON.parse(dataElement.textContent);
+        var selectedValue = objetivo.value;
+
+        function addOption(value, label) {
+            var option = document.createElement("option");
+            option.value = value;
+            option.textContent = label;
+            if (value === selectedValue) {
+                option.selected = true;
+            }
+            objetivo.appendChild(option);
+        }
+
+        function renderObjetivos() {
+            objetivo.innerHTML = "";
+            addOption("", "---------");
+
+            objetivos
+                .filter(function (item) {
+                    return item.desafio_id === desafio.value;
+                })
+                .forEach(function (item) {
+                    addOption(item.id, item.label);
+                });
+        }
+
+        desafio.addEventListener("change", function () {
+            selectedValue = "";
+            renderObjetivos();
+        });
+
+        renderObjetivos();
+    }());
+</script>
+{% endblock %}
