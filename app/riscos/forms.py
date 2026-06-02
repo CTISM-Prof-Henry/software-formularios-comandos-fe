@@ -43,9 +43,9 @@ class RiscoForm(forms.ModelForm):
             "impacto": "Impacto",
             "eficacia_controles": "Eficacia dos controles internos",
             "resposta": "Resposta",
-            "acao": "Acao",
-            "data_inicio": "Data inicio",
-            "data_fim": "Data fim",
+            "acao": "Ação",
+            "data_inicio": "Data de início",
+            "data_fim": "Data de fim",
             "situacao": "Situacao",
         }
 
@@ -56,7 +56,7 @@ class RiscoForm(forms.ModelForm):
         desafio = cleaned_data.get("desafio")
         objetivo = cleaned_data.get("objetivo")
         if data_inicio and data_fim and data_fim < data_inicio:
-            self.add_error("data_fim", "A data fim deve ser maior ou igual a data inicio.")
+            self.add_error("data_fim", "A data de fim deve ser maior ou igual à data de início.")
         if desafio and objetivo and objetivo.desafio_id != desafio.id:
             self.add_error("objetivo", "Selecione um objetivo vinculado ao desafio escolhido.")
         return cleaned_data

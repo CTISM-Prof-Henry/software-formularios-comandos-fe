@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Cadastro Local | Comandos FE{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/login.css' %}">
+{% endblock %}
+
+{% block body %}
+<section class="login-shell">
+    <div class="login-frame">
+        <div class="login-page">
+            <div class="login-showcase">
+                <img class="login-logo-image logo-comandos" src="{% static 'assets/logo-comandos-fe.jpeg' %}" alt="Comandos FE">
+                <div class="logo-divider-small"></div>
+                <div class="logo-ufsm">UFSM</div>
+            </div>
+            <div class="login-main-divider"></div>
+            <div class="login-panel">
+                <div class="login-card login-card--wide">
+                    <h1 class="login-title">Criar conta local</h1>
+                    <p class="helper-text helper-text--block">Cadastre uma conta local para acessar o sistema sem depender do login UFSM.</p>
+                    {% if messages %}
+                        {% for message in messages %}
+                            <p class="alert-success">{{ message }}</p>
+                        {% endfor %}
+                    {% endif %}
+                    {% if form.non_field_errors %}
+                        <p class="alert-error">{{ form.non_field_errors|striptags }}</p>
+                    {% endif %}
+                    <form action="{% url 'local-registration' %}" method="post">
+                        {% csrf_token %}
+                        <div class="form-grid">
+                            <div class="login-form-group">
+                                <label class="login-field-label" for="id_matricula">Matricula</label>
+                                <input id="id_matricula" name="matricula" type="text" value="{{ form.matricula.value|default:'' }}" autocomplete="username" autofocus>
+                                {% if form.matricula.errors %}
+                                    <span class="field-error">{{ form.matricula.errors|join:", " }}</span>
+                                {% endif %}
+                            </div>
+                            <div class="login-form-group">
+                                <label class="login-field-label" for="id_unidade">Setor/Departamento</label>
+                                {{ form.unidade }}
+                                {% if form.unidade.errors %}
+                                    <span class="field-error">{{ form.unidade.errors|join:", " }}</span>
+                                {% endif %}
+                            </div>
+                            <div class="login-form-group login-form-group--full">
+                                <label class="login-field-label" for="id_nome">Nome completo</label>
+                                <input id="id_nome" name="nome" type="text" value="{{ form.nome.value|default:'' }}" autocomplete="name">
+                                {% if form.nome.errors %}
+                                    <span class="field-error">{{ form.nome.errors|join:", " }}</span>
+                                {% endif %}
+                            </div>
+                            <div class="login-form-group login-form-group--full">
+                                <label class="login-field-label" for="id_email">E-mail</label>
+                                <input id="id_email" name="email" type="email" value="{{ form.email.value|default:'' }}" autocomplete="email">
+                                {% if form.email.errors %}
+                                    <span class="field-error">{{ form.email.errors|join:", " }}</span>
+                                {% endif %}
+                            </div>
+                            <div class="login-form-group">
+                                <label class="login-field-label" for="id_senha">Senha local</label>
+                                <input id="id_senha" name="senha" type="password" autocomplete="new-password">
+                                {% if form.senha.errors %}
+                                    <span class="field-error">{{ form.senha.errors|join:", " }}</span>
+                                {% endif %}
+                            </div>
+                            <div class="login-form-group">
+                                <label class="login-field-label" for="id_confirmar_senha">Confirmar senha</label>
+                                <input id="id_confirmar_senha" name="confirmar_senha" type="password" autocomplete="new-password">
+                                {% if form.confirmar_senha.errors %}
+                                    <span class="field-error">{{ form.confirmar_senha.errors|join:", " }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <button class="btn" style="width:100%;" type="submit">Cadastrar</button>
+                        <div class="actions-row actions-row--stacked">
+                            <a class="btn btn-secondary" href="{% url 'login' %}?auth_source=local{% if form.matricula.value %}&matricula={{ form.matricula.value|urlencode }}{% endif %}">Voltar ao login</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="login-footer-bar">
+            <a class="contact-btn" href="mailto:contato@example.com">Contato</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

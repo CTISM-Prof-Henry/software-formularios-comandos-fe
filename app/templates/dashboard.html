@@ -1,15 +1,19 @@
 {% extends "base.html" %}
 
-{% block title %}Pagina Inicial | Comandos FE{% endblock %}
+{% block title %}Painel Inicial | Comandos FE{% endblock %}
 
 {% block content %}
 <div class="page-head">
     <div>
-        <h1>Pagina Inicial</h1>
+        <h1>Painel Inicial</h1>
     </div>
 </div>
 
+{% if request.perms_context.is_admin %}
+{% elif request.perms_context.can_access_risks %}
+{% else %}
 <div class="card">
-    <p class="muted empty-state"></p>
+    <p class="muted empty-state">Seu usuario esta autenticado, mas ainda nao recebeu um perfil de acesso.</p>
 </div>
+{% endif %}
 {% endblock %}

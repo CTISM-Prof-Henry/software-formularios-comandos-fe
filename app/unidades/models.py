@@ -6,7 +6,7 @@ from django.db import models
 class TipoUnidade(models.TextChoices):
     REITORIA = "REITORIA", "Reitoria"
     DIRETORIA = "DIRETORIA", "Diretoria"
-    COORDENACAO = "COORDENACAO", "Coordenacao"
+    COORDENACAO = "COORDENACAO", "Coordenação"
 
 
 class Unidade(models.Model):

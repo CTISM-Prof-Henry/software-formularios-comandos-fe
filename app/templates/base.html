@@ -6,8 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Comandos FE{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/app.css' %}">
+    {% block extra_css %}{% endblock %}
 </head>
 <body>
+    {% block body %}
     <div class="shell">
         <aside class="sidebar">
             <div class="brand">
@@ -16,16 +18,69 @@
                 </div>
             </div>
             <nav class="nav-links">
-                <a class="{% if request.path == '/' %}active{% endif %}" href="/">Pagina Inicial</a>
-                <a class="{% if '/riscos/' in request.path %}active{% endif %}" href="/riscos/">Riscos</a>
-                <a class="{% if request.path == '/unidades/' %}active{% endif %}" href="/unidades/">Unidades</a>
-                <a class="{% if request.path == '/usuarios/' %}active{% endif %}" href="/usuarios/">Usuarios</a>
+                <a class="{% if request.path == '/' %}active{% endif %}" href="{% url 'index' %}">Pagina Inicial</a>
+                {% if request.perms_context.is_admin %}
+                <a class="{% if '/riscos/' in request.path %}active{% endif %}" href="{% url 'risco-list' %}">Riscos</a>
+                <a class="{% if request.path == '/unidades/' %}active{% endif %}" href="{% url 'unidade-list' %}">Unidades</a>
+                <a class="{% if request.path == '/usuarios/' %}active{% endif %}" href="{% url 'usuario-list' %}">Usuarios</a>
+                {% elif request.perms_context.can_access_risks %}
+                <a class="{% if '/riscos/' in request.path %}active{% endif %}" href="{% url 'risco-list' %}">Riscos</a>
+                {% endif %}
             </nav>
             <div class="sidebar-spacer"></div>
+            <button class="sidebar-logout-trigger" type="button" data-open-logout-modal>Sair</button>
+            <form id="logout-form" action="{% url 'logout' %}" method="post">
+                {% csrf_token %}
+            </form>
         </aside>
         <main class="content">
             {% block content %}{% endblock %}
         </main>
     </div>
+    <div class="modal-backdrop" data-logout-modal hidden>
+        <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="logout-modal-title">
+            <h2 id="logout-modal-title">Sair do sistema?</h2>
+            <p>Voce vai encerrar sua sessao atual.</p>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" type="button" data-close-logout-modal>Cancelar</button>
+                <button class="btn btn-primary" type="submit" form="logout-form">Sair</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        (() => {
+            const modal = document.querySelector("[data-logout-modal]");
+            const openButton = document.querySelector("[data-open-logout-modal]");
+            const closeButton = document.querySelector("[data-close-logout-modal]");
+
+            if (!modal || !openButton || !closeButton) {
+                return;
+            }
+
+            const openModal = () => {
+                modal.hidden = false;
+                closeButton.focus();
+            };
+
+            const closeModal = () => {
+                modal.hidden = true;
+                openButton.focus();
+            };
+
+            openButton.addEventListener("click", openModal);
+            closeButton.addEventListener("click", closeModal);
+            modal.addEventListener("click", (event) => {
+                if (event.target === modal) {
+                    closeModal();
+                }
+            });
+            document.addEventListener("keydown", (event) => {
+                if (event.key === "Escape" && !modal.hidden) {
+                    closeModal();
+                }
+            });
+        })();
+    </script>
+    {% endblock %}
 </body>
 </html>

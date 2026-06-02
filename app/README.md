@@ -2,8 +2,6 @@
 
 ## Como Rodar
 
-Clone o repositorio e entre na pasta do projeto:
-teste
 ```powershell
 git clone https://github.com/Brunofcrosa/comandos-fe.git
 cd comandos-fe
@@ -43,7 +41,6 @@ python manage.py test
 ```
 
 ## pytest
-- python -m pytest -v
 - python -m coverage run -m pytest -v
 - python -m coverage report
 - python -m coverage html

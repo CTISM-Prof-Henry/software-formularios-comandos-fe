@@ -32,6 +32,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "gestao_riscos.middleware.LoginRequiredMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
@@ -76,3 +77,17 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 SIMULATED_USER_EMAIL = os.getenv("SIMULATED_USER_EMAIL", "fulano@gmail.com")
+
+AUTHENTICATION_BACKENDS = [
+    "gestao_riscos.auth.LibraryAuthenticationBackend",
+    "django.contrib.auth.backends.ModelBackend",
+]
+
+UFSM_LIBRARY_AUTH_URL = os.getenv(
+    "UFSM_LIBRARY_AUTH_URL",
+    "https://portal.ufsm.br/biblioteca/leitor/j_security_check",
+)
+UFSM_LIBRARY_AUTH_TIMEOUT = int(os.getenv("UFSM_LIBRARY_AUTH_TIMEOUT", "15"))
+LOGIN_URL = "/login/"
+LOGIN_REDIRECT_URL = os.getenv("LOGIN_REDIRECT_URL", "/")
+LOGOUT_REDIRECT_URL = os.getenv("LOGOUT_REDIRECT_URL", "/login/")

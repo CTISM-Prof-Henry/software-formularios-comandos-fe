@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Atualizar cadastro | Comandos FE{% endblock %}
+
+{% block content %}
+<div class="page-head">
+    <div>
+        <h1>Atualizar cadastro</h1>
+        <p class="muted">Complete seu vinculo no sistema e defina uma senha local para os proximos acessos.</p>
+    </div>
+</div>
+
+<div class="card compact">
+    <form method="post">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        <p>
+            <label>Matricula</label>
+            <input type="text" value="{{ request.user.username }}" disabled>
+        </p>
+        <p>
+            <label>E-mail</label>
+            <input type="text" value="{{ request.user.email|default:'-' }}" disabled>
+        </p>
+        {{ form.as_p }}
+        <div class="actions form-actions-right">
+            <button class="btn" type="submit">Salvar cadastro</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

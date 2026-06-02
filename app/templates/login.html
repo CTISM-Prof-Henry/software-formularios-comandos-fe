@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Login | Comandos FE{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/login.css' %}">
+{% endblock %}
+
+{% block body %}
+<section class="login-shell">
+    <div class="login-frame">
+        <div class="login-page">
+            <div class="login-showcase">
+                <img class="login-logo-image logo-comandos" src="{% static 'assets/logo-comandos-fe.jpeg' %}" alt="Comandos FE">
+                <div class="logo-divider-small"></div>
+                <div class="logo-ufsm">UFSM</div>
+            </div>
+            <div class="login-main-divider"></div>
+            <div class="login-panel">
+                <div class="login-card">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <p class="alert-success">{{ message }}</p>
+                        {% endfor %}
+                    {% endif %}
+                    {% if form.non_field_errors %}
+                        <p class="alert-error">{{ form.non_field_errors|striptags }}</p>
+                    {% endif %}
+                    <form action="{% url 'login' %}" method="post">
+                        {% csrf_token %}
+                        {% if next_url %}
+                            <input type="hidden" name="next" value="{{ next_url }}">
+                        {% endif %}
+                        <div class="login-mode" role="radiogroup" aria-label="Modo de login">
+                            <label>
+                                <input type="radio" name="auth_source" value="ufsm" {% if form.auth_source.value != 'local' %}checked{% endif %}>
+                                <span>UFSM</span>
+                            </label>
+                            <label>
+                                <input type="radio" name="auth_source" value="local" {% if form.auth_source.value == 'local' %}checked{% endif %}>
+                                <span>Sistema</span>
+                            </label>
+                        </div>
+                        <div class="login-form-group">
+                            <label class="login-field-label" for="id_matricula">Matricula</label>
+                            <input id="id_matricula" name="matricula" type="text" value="{{ form.matricula.value|default:'' }}" autocomplete="username" autofocus>
+                            {% if form.matricula.errors %}
+                                <span class="field-error">{{ form.matricula.errors|join:", " }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="login-form-group">
+                            <label class="login-field-label" for="id_senha">Senha</label>
+                            <input id="id_senha" name="senha" type="password" autocomplete="current-password">
+                            {% if form.senha.errors %}
+                                <span class="field-error">{{ form.senha.errors|join:", " }}</span>
+                            {% endif %}
+                        </div>
+                        <button class="btn" style="width:100%;" type="submit">Entrar</button>
+                        <div class="actions-row actions-row--stacked">
+                            <a class="btn btn-secondary" data-local-register-link href="{% url 'local-registration' %}">Criar conta local</a>
+                            <span class="helper-text" data-auth-hint>Primeiro acesso com matricula UFSM? Use a opcao UFSM.</span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="login-footer-bar">
+            <a class="contact-btn" href="mailto:contato@example.com">Contato</a>
+        </div>
+    </div>
+</section>
+<script>
+    (() => {
+        const authSourceInputs = document.querySelectorAll('input[name="auth_source"]');
+        const matriculaInput = document.getElementById("id_matricula");
+        const authHint = document.querySelector("[data-auth-hint]");
+        const registerLink = document.querySelector("[data-local-register-link]");
+
+        if (!authSourceInputs.length || !authHint || !registerLink) {
+            return;
+        }
+
+        const baseHref = registerLink.getAttribute("href");
+        const updateLoginAssist = () => {
+            const selectedSource = document.querySelector('input[name="auth_source"]:checked')?.value || "ufsm";
+            const matricula = matriculaInput ? matriculaInput.value.trim() : "";
+            authHint.textContent = selectedSource === "local"
+                ? "Nao tem conta local ainda? Crie seu cadastro."
+                : "Primeiro acesso com matricula UFSM? Use a opcao UFSM.";
+
+            if (matricula) {
+                registerLink.setAttribute("href", `${baseHref}?matricula=${encodeURIComponent(matricula)}`);
+                return;
+            }
+
+            registerLink.setAttribute("href", baseHref);
+        };
+
+        authSourceInputs.forEach((input) => input.addEventListener("change", updateLoginAssist));
+        if (matriculaInput) {
+            matriculaInput.addEventListener("input", updateLoginAssist);
+        }
+        updateLoginAssist();
+    })();
+</script>
+{% endblock %}

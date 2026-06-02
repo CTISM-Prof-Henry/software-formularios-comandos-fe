@@ -5,13 +5,12 @@ classDiagram
 
     class Usuario {
         - id : UUID
-        - keycloakId : String
         - matricula : String
         - nome : String
         - email : String
         - perfilAcesso : String
-        - cadastroCompleto : boolean
-        + processarToken() : boolean
+        - senhaLocalDefinida : boolean
+        + autenticarNaBiblioteca() : boolean
     }
 
     class Unidade {
@@ -129,12 +128,12 @@ cd D:\repositorios\comandos-fe\app
 
 Se ainda não tiver ambiente virtual:
 ```Se ainda não tiver ambiente virtual:
-python -m venv .venv
+python -m venv ..\.venv
 ```
 
 Ativa o ambiente:
 ```Ativa o ambiente:
-..venv\Scripts\Activate.ps1
+..\.venv\Scripts\Activate.ps1
 ```
 
 Instala as dependências:

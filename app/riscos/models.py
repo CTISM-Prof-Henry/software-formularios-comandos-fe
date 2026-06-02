@@ -4,7 +4,7 @@ from django.db import models
 
 
 class TipoRisco(models.TextChoices):
-    ESTRATEGICO = "ESTRATEGICO", "Estrategico"
+    ESTRATEGICO = "ESTRATEGICO", "Estratégico"
     OPERACIONAL = "OPERACIONAL", "Operacional"
     FINANCEIRO = "FINANCEIRO", "Financeiro"
     CONFORMIDADE = "CONFORMIDADE", "Conformidade"
@@ -14,7 +14,7 @@ class TipoRisco(models.TextChoices):
 class EscalaRisco(models.IntegerChoices):
     MUITO_BAIXO = 1, "Muito baixo"
     BAIXO = 2, "Baixo"
-    MEDIO = 3, "Medio"
+    MEDIO = 3, "Médio"
     ALTO = 4, "Alto"
     MUITO_ALTO = 5, "Muito alto"
 
@@ -23,7 +23,7 @@ class EficaciaControle(models.TextChoices):
     INEXISTENTE = "INEXISTENTE", "Inexistente"
     FRACA = "FRACA", "Fraca"
     MEDIANA = "MEDIANA", "Mediana"
-    SATISFATORIA = "SATISFATORIA", "Satisfatoria"
+    SATISFATORIA = "SATISFATORIA", "Satisfatória"
     FORTE = "FORTE", "Forte"
 
 
@@ -38,13 +38,13 @@ class AcaoTratamento(models.TextChoices):
     PREVENTIVA = "PREVENTIVA", "Preventiva"
     CORRETIVA = "CORRETIVA", "Corretiva"
     MONITORAMENTO = "MONITORAMENTO", "Monitoramento"
-    CONTINGENCIA = "CONTINGENCIA", "Contingencia"
+    CONTINGENCIA = "CONTINGENCIA", "Contingência"
 
 
 class SituacaoTratamento(models.TextChoices):
-    NAO_INICIADO = "NAO_INICIADO", "Nao iniciado"
+    NAO_INICIADO = "NAO_INICIADO", "Não iniciado"
     EM_ANDAMENTO = "EM_ANDAMENTO", "Em andamento"
-    CONCLUIDO = "CONCLUIDO", "Concluido"
+    CONCLUIDO = "CONCLUIDO", "Concluído"
     ATRASADO = "ATRASADO", "Atrasado"
 
 
@@ -88,7 +88,7 @@ class Macroprocesso(models.Model):
         verbose_name_plural = "Macroprocessos"
 
     def __str__(self):
-        return self.nome
+        return str(self.nome)
 
 
 class Risco(models.Model):

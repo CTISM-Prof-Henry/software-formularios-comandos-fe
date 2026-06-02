@@ -5,7 +5,8 @@ from django.db import models
 
 class PerfilAcesso(models.TextChoices):
     ADMIN = "ADMIN", "Administrador"
-    ESTUDANTE = "ESTUDANTE", "Estudante"
+    GESTAO_RISCOS = "GESTAO_RISCOS", "Gestão de Riscos"
+    ESTUDANTE = "ESTUDANTE", "Sem acesso"
 
 class Usuario(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -24,13 +25,14 @@ class Usuario(models.Model):
         choices=PerfilAcesso.choices,
         default=PerfilAcesso.ESTUDANTE,
     )
+    senha_local_definida = models.BooleanField(default=False)
     criado_em = models.DateTimeField(auto_now_add=True)
     atualizado_em = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ["nome"]
         verbose_name = "Usuario"
-        verbose_name_plural = "Usuarios"
+        verbose_name_plural = "Usuários"
 
     def __str__(self):
         if self.matricula:

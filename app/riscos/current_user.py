@@ -1,5 +1,6 @@
 from django.conf import settings
 
+from gestao_riscos.user_context import get_current_request, get_usuario_for_django_user
 from unidades.models import Unidade
 from usuarios.models import Usuario
 
@@ -8,6 +9,17 @@ CURRENT_USER_DEPARTMENT_NAME = "Politecnico"
 
 
 def get_current_user():
+    request = get_current_request()
+    if request and request.user.is_authenticated:
+        usuario = getattr(request, "current_usuario", None)
+        if usuario is None:
+            usuario = get_usuario_for_django_user(
+                request.user,
+                select_related_unidade=True,
+            )
+        if usuario:
+            return usuario
+
     simulated_user_email = getattr(settings, "SIMULATED_USER_EMAIL", "")
     return (
         Usuario.objects.select_related("unidade")
@@ -20,6 +32,14 @@ def get_current_user():
 
 
 def get_current_user_name():
+    request = get_current_request()
+    if request and request.user.is_authenticated:
+        full_name = request.user.get_full_name()
+        if full_name:
+            return full_name
+        if request.user.username:
+            return request.user.username
+
     usuario = get_current_user()
     if usuario and usuario.nome:
         return usuario.nome
@@ -30,14 +50,18 @@ def get_current_user_department():
     usuario = get_current_user()
     if usuario and usuario.unidade:
         return usuario.unidade
-    return (
-        Unidade.objects.filter(sigla__iexact="POLITECNICO").first()
-        or Unidade.objects.filter(sigla__iexact="POLI").first()
-        or Unidade.objects.filter(nome__icontains=CURRENT_USER_DEPARTMENT_NAME).first()
-    )
+    return _get_default_department()
 
 
 def get_current_user_units():
+    request = get_current_request()
+    if (
+        request
+        and request.user.is_authenticated
+        and _is_current_user_admin(request.user)
+    ):
+        return Unidade.objects.all().order_by("sigla")
+
     departamento = get_current_user_department()
     if not departamento:
         return Unidade.objects.none()
@@ -59,6 +83,10 @@ def get_current_user_units():
 
 
 def user_can_manage_risco(risco):
+    request = get_current_request()
+    if request and request.user.is_authenticated and _is_current_user_admin(request.user):
+        return True
+
     departamento = get_current_user_department()
     if not departamento:
         return False
@@ -69,3 +97,18 @@ def user_can_manage_risco(risco):
             return True
         unidade = unidade.unidade_pai
     return False
+
+
+def _is_current_user_admin(user):
+    from gestao_riscos.permissions import is_admin
+
+    return is_admin(user)
+
+
+def _get_default_department():
+    return (
+        Unidade.objects.filter(sigla__iexact="POLITECNICO").first()
+        or Unidade.objects.filter(sigla__iexact="POLI").first()
+        or Unidade.objects.filter(nome__icontains="Politécnico").first()
+        or Unidade.objects.filter(nome__icontains=CURRENT_USER_DEPARTMENT_NAME).first()
+    )
