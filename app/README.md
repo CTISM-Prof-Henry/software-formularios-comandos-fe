@@ -45,3 +45,15 @@ python manage.py test
 - python -m coverage report
 - python -m coverage html
 - htmlcov/index.html no seu navegador.
+
+## Lint (Pylint)
+
+Instalar Pylint:
+```Instalar Pylint
+.\.venv\Scripts\python.exe -m pip install pylint
+```
+
+Executar Pylint:
+```Executar Pylint
+.\.venv\Scripts\python.exe -m pylint app -f colorized
+```

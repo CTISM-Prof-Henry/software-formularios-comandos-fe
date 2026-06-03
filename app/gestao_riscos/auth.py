@@ -10,13 +10,22 @@ from usuarios.models import PerfilAcesso, Usuario
 
 
 class _NoRedirectHandler(HTTPRedirectHandler):
-    def http_error_302(self, req, fp, code, msg, headers):
-        return fp
+    http_error_301 = None
+    http_error_302 = None
+    http_error_303 = None
+    http_error_307 = None
+    http_error_308 = None
 
-    http_error_301 = http_error_302
-    http_error_303 = http_error_302
-    http_error_307 = http_error_302
-    http_error_308 = http_error_302
+
+def _return_response(*args):
+    return args[2]
+
+
+_NoRedirectHandler.http_error_301 = _return_response
+_NoRedirectHandler.http_error_302 = _return_response
+_NoRedirectHandler.http_error_303 = _return_response
+_NoRedirectHandler.http_error_307 = _return_response
+_NoRedirectHandler.http_error_308 = _return_response
 
 
 def split_full_name(full_name):
@@ -82,7 +91,7 @@ def sync_user_with_profile(user, usuario=None):
 
 
 class LibraryAuthenticationBackend(BaseBackend):
-    def authenticate(self, request, username=None, password=None, auth_source=None, **kwargs):
+    def authenticate(self, _request, username=None, password=None, *, auth_source=None, **_kwargs):
         if auth_source != "ufsm" or not username or not password:
             return None
 
@@ -90,7 +99,7 @@ class LibraryAuthenticationBackend(BaseBackend):
             return None
 
         user_model = get_user_model()
-        user = user_model._default_manager.filter(username__iexact=username).first()
+        user = user_model.objects.filter(username__iexact=username).first()
         created = user is None
 
         if created:
@@ -106,6 +115,6 @@ class LibraryAuthenticationBackend(BaseBackend):
     def get_user(self, user_id):
         user_model = get_user_model()
         try:
-            return user_model._default_manager.get(pk=user_id)
+            return user_model.objects.get(pk=user_id)
         except user_model.DoesNotExist:
             return None

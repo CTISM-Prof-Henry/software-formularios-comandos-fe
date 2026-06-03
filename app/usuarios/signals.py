@@ -8,13 +8,13 @@ from .models import Usuario
 
 
 @receiver(post_save, sender=Usuario, dispatch_uid="usuarios_sync_auth_user_from_profile")
-def sync_auth_user_from_profile(sender, instance, **kwargs):
+def sync_auth_user_from_profile(_sender, instance, **_kwargs):
     matricula = (instance.matricula or "").strip()
     if not matricula:
         return
 
     user_model = get_user_model()
-    user = user_model._default_manager.filter(username__iexact=matricula).first()
+    user = user_model.objects.filter(username__iexact=matricula).first()
     if user is None:
         return
 

@@ -1,18 +1,23 @@
-from urllib.parse import urlencode
+﻿from urllib.parse import urlencode
 
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth import authenticate, get_user_model, login, logout, update_session_auth_hash
+from django.contrib.auth import (
+    authenticate,
+    get_user_model,
+    login,
+    logout,
+    update_session_auth_hash,
+)
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils.http import url_has_allowed_host_and_scheme
+from usuarios.forms import AtualizarCadastroForm, CadastroLocalForm
 
 from .forms import LoginForm
-
 from .permissions import can_access_risk_module
 from .user_context import get_usuario_for_django_user, needs_profile_update
-from usuarios.forms import AtualizarCadastroForm, CadastroLocalForm
 
 
 def index(request):
@@ -130,9 +135,13 @@ def atualizar_cadastro(request):
 def _append_login_error(form, auth_source, matricula):
     if auth_source == "local":
         user_model = get_user_model()
-        user = user_model._default_manager.filter(username__iexact=matricula).first()
+        user = user_model.objects.filter(username__iexact=matricula).first()
         if user is None or not user.has_usable_password():
-            form.add_error(None, "Conta local nao encontrada. Crie seu cadastro local ou entre com a matricula da UFSM.")
+            form.add_error(
+                None,
+                "Conta local nao encontrada. Crie seu cadastro local ou "
+                "entre com a matricula da UFSM.",
+            )
             return
         form.add_error(None, "Matricula ou senha local invalidas.")
         return

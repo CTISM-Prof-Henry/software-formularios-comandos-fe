@@ -1,15 +1,19 @@
 import pytest
 from django.urls import reverse
+
 from unidades.models import TipoUnidade, Unidade
 from usuarios.models import PerfilAcesso, Usuario
 
-@pytest.fixture
-def unidade_teste(db):
+
+@pytest.fixture(name="unidade_teste")
+def criar_unidade_teste(db):
+    _ = db
     return Unidade.objects.create(
         sigla="POLI",
         nome="Politecnico",
         tipo_unidade=TipoUnidade.DIRETORIA,
     )
+
 
 @pytest.mark.django_db
 def test_deve_listar_usuarios_quando_acessar_rota_sem_login(client, unidade_teste):
@@ -25,6 +29,7 @@ def test_deve_listar_usuarios_quando_acessar_rota_sem_login(client, unidade_test
 
     assert response.status_code == 200
     assert "Aluno Teste" in response.content.decode()
+
 
 @pytest.mark.django_db
 def test_deve_criar_usuario_quando_enviar_dados_validos_no_crud(client, unidade_teste):
@@ -43,12 +48,14 @@ def test_deve_criar_usuario_quando_enviar_dados_validos_no_crud(client, unidade_
     assert response.url == reverse("usuario-list")
     assert Usuario.objects.filter(matricula="2024002").exists()
 
+
 @pytest.mark.django_db
 def test_deve_abrir_pagina_inicial_quando_acessar_raiz_sem_login(client):
     response = client.get(reverse("index"))
 
     assert response.status_code == 200
     assert "Comandos FE" in response.content.decode()
+
 
 @pytest.mark.django_db
 def test_deve_exibir_usuario_na_listagem_quando_criado_com_dados_validos(client):

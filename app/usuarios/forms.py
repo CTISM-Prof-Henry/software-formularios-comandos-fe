@@ -92,7 +92,7 @@ class CadastroLocalForm(forms.ModelForm):
     def clean_matricula(self):
         matricula = self.cleaned_data["matricula"].strip()
         user_model = get_user_model()
-        if user_model._default_manager.filter(username__iexact=matricula).exists():
+        if user_model.objects.filter(username__iexact=matricula).exists():
             raise forms.ValidationError("Ja existe uma conta cadastrada para esta matricula.")
         if Usuario.objects.filter(matricula__iexact=matricula).exists():
             raise forms.ValidationError("Ja existe uma conta cadastrada para esta matricula.")
@@ -104,7 +104,7 @@ class CadastroLocalForm(forms.ModelForm):
     def clean_email(self):
         email = self.cleaned_data["email"].strip().lower()
         user_model = get_user_model()
-        if user_model._default_manager.filter(email__iexact=email).exists():
+        if user_model.objects.filter(email__iexact=email).exists():
             raise forms.ValidationError("Ja existe uma conta cadastrada para este e-mail.")
         if Usuario.objects.filter(email__iexact=email).exists():
             raise forms.ValidationError("Ja existe uma conta cadastrada para este e-mail.")
