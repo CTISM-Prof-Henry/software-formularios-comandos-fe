@@ -1,47 +1,47 @@
-# Autenticacao e Permissoes
+# Autenticação e Permissões
 
-O sistema combina autenticacao local do Django com um backend externo que valida credenciais contra o endpoint da biblioteca da UFSM.
+O sistema combina autenticação local do Django com um backend externo que valida credenciais contra o endpoint da biblioteca da UFSM.
 
-## Fontes de autenticacao
+## Fontes de autenticação
 
 | Fonte | Como funciona |
 | --- | --- |
-| Sistema local | Usa usuario e senha armazenados no modelo padrao de autenticacao do Django. |
+| Sistema local | Usa usuário e senha armazenados no modelo padrão de autenticação do Django. |
 | Biblioteca UFSM | Envia `j_username` e `j_password` ao endpoint configurado em `UFSM_LIBRARY_AUTH_URL`. |
 
-O backend externo esta em `gestao_riscos/auth.py`, na classe `LibraryAuthenticationBackend`.
+O backend externo está em `gestao_riscos/auth.py`, na classe `LibraryAuthenticationBackend`.
 
 ## Login
 
 A view `login_page` recebe:
 
-- `auth_source`: define se o login e local ou UFSM.
+- `auth_source`: define se o login é local ou UFSM.
 - `matricula`: usada como `username`.
-- `senha`: senha informada pelo usuario.
-- `next`: URL segura para redirecionamento apos login.
+- `senha`: senha informada pelo usuário.
+- `next`: URL segura para redirecionamento após login.
 
-O projeto valida o parametro `next` com `url_has_allowed_host_and_scheme`, evitando redirecionamento aberto para dominios externos.
+O projeto valida o parâmetro `next` com `url_has_allowed_host_and_scheme`, evitando redirecionamento aberto para domínios externos.
 
 ## Cadastro local
 
-A view `local_registration` usa `CadastroLocalForm`. O formulario:
+A view `local_registration` usa `CadastroLocalForm`. O formulário:
 
-- exige matricula, nome e e-mail;
-- valida duplicidade de matricula e e-mail em `Usuario` e no modelo de usuario do Django;
+- exige matrícula, nome e e-mail;
+- valida duplicidade de matrícula e e-mail em `Usuario` e no modelo de usuário do Django;
 - cria o perfil local `Usuario`;
-- cria o usuario de autenticacao do Django;
+- cria o usuário de autenticação do Django;
 - salva senha local com `set_password`.
 
-## Atualizacao de cadastro
+## Atualização de cadastro
 
-Quando o usuario autentica pela UFSM e ainda nao possui perfil local completo, o middleware redireciona para `atualizar-cadastro/`.
+Quando o usuário autentica pela UFSM e ainda não possui perfil local completo, o middleware redireciona para `atualizar-cadastro/`.
 
-O formulario `AtualizarCadastroForm` vincula:
+O formulário `AtualizarCadastroForm` vincula:
 
 - unidade/setor;
 - senha local;
-- confirmacao de senha;
-- matricula obtida do usuario autenticado.
+- confirmação de senha;
+- matrícula obtida do usuário autenticado.
 
 ## Perfis de acesso
 
@@ -50,39 +50,39 @@ O modelo `Usuario` define os perfis:
 | Perfil | Valor | Acesso esperado |
 | --- | --- | --- |
 | Administrador | `ADMIN` | Acesso administrativo completo. |
-| Gestao de Riscos | `GESTAO_RISCOS` | Acesso ao modulo de riscos conforme unidade. |
-| Sem acesso | `ESTUDANTE` | Usuario autenticado sem permissao para o modulo. |
+| Gestão de Riscos | `GESTAO_RISCOS` | Acesso ao módulo de riscos conforme unidade. |
+| Sem acesso | `ESTUDANTE` | Usuário autenticado sem permissão para o módulo. |
 
-## Regras de autorizacao
+## Regras de autorização
 
-As regras estao em `gestao_riscos/permissions.py`.
+As regras estão em `gestao_riscos/permissions.py`.
 
-| Funcao/classe | Responsabilidade |
+| Função/classe | Responsabilidade |
 | --- | --- |
-| `is_admin` | Verifica se o usuario e administrador. |
-| `is_risk_manager` | Verifica se o usuario tem perfil de gestao de riscos e nao e admin. |
-| `can_access_risk_module` | Permite acesso ao modulo para admin ou gestao de riscos. |
+| `is_admin` | Verifica se o usuário é administrador. |
+| `is_risk_manager` | Verifica se o usuário tem perfil de gestão de riscos e não é admin. |
+| `can_access_risk_module` | Permite acesso ao módulo para admin ou gestão de riscos. |
 | `AdminRequiredMixin` | Restringe views administrativas. |
-| `RiskModuleRequiredMixin` | Restringe views do modulo de riscos. |
+| `RiskModuleRequiredMixin` | Restringe views do módulo de riscos. |
 
 ## Middleware
 
-O `LoginRequiredMiddleware` aplica tres verificacoes principais:
+O `LoginRequiredMiddleware` aplica três verificações principais:
 
-1. Se a rota exige usuario autenticado.
-2. Se o usuario precisa atualizar o cadastro.
-3. Se o usuario possui permissao para acessar a rota.
+1. Se a rota exige usuário autenticado.
+2. Se o usuário precisa atualizar o cadastro.
+3. Se o usuário possui permissão para acessar a rota.
 
-Rotas publicas:
+Rotas públicas:
 
 - `/login/`
 - `/cadastro-local/`
 - `/health/`
-- `/atualizar-cadastro/` em contexto de atualizacao
+- `/atualizar-cadastro/` em contexto de atualização
 - `/logout/`
-- arquivos estaticos
+- arquivos estáticos
 - `/admin/`
 
-!!! note "Ponto de atencao"
-    O admin do Django foi tratado como rota publica no middleware. Isso nao remove a autenticacao do admin, pois o proprio Django Admin exige login, mas e importante entender que o middleware customizado nao bloqueia essa area.
+!!! note "Ponto de atenção"
+    O admin do Django foi tratado como rota pública no middleware. Isso não remove a autenticação do admin, pois o próprio Django Admin exige login, mas é importante entender que o middleware customizado não bloqueia essa área.
 

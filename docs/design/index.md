@@ -1,6 +1,6 @@
 # Telas e Design
 
-A pasta `docs/design/screens/` ja existia no projeto e foi reaproveitada na documentacao MkDocs.
+A pasta `docs/design/screens/` já existia no projeto e foi reaproveitada na documentação MkDocs.
 
 ## Home
 
@@ -22,9 +22,9 @@ A pasta `docs/design/screens/` ja existia no projeto e foi reaproveitada na docu
 
 ![Tela Visualizar Planos](screens/VisualizarPlanos.png)
 
-## Observacoes de design
+## Observações de design
 
-- As telas documentam o fluxo principal do usuario: autenticar, registrar, acessar a home e manipular planos/riscos.
-- A nomenclatura visual usa "planos" em alguns pontos, enquanto o dominio do codigo usa "riscos" e "analise de riscos". Vale padronizar a linguagem para reduzir ambiguidade.
-- Se o projeto for apresentado academicamente, estas imagens ajudam a demonstrar a relacao entre prototipo e implementacao.
+- As telas documentam o fluxo principal do usuário: autenticar, registrar, acessar a home e manipular planos/riscos.
+- A nomenclatura visual usa "planos" em alguns pontos, enquanto o domínio do código usa "riscos" e "análise de riscos". Vale padronizar a linguagem para reduzir ambiguidade.
+- Se o projeto for apresentado academicamente, estas imagens ajudam a demonstrar a relação entre protótipo e implementação.
 

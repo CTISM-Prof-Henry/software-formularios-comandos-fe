@@ -1,43 +1,43 @@
 # Arquitetura
 
-O projeto segue uma arquitetura Django tradicional, organizada em apps por dominio. A raiz funcional da aplicacao esta em `app/`.
+O projeto segue uma arquitetura Django tradicional, organizada em apps por domínio. A raiz funcional da aplicação está em `app/`.
 
 ## Componentes principais
 
 | Caminho | Responsabilidade |
 | --- | --- |
 | `app/manage.py` | Entrada de comandos administrativos do Django. |
-| `app/gestao_riscos/settings.py` | Configuracao do projeto: apps, middleware, banco, templates, static files e autenticacao. |
+| `app/gestao_riscos/settings.py` | Configuração do projeto: apps, middleware, banco, templates, static files e autenticação. |
 | `app/gestao_riscos/urls.py` | Roteamento principal. |
-| `app/gestao_riscos/auth.py` | Backend de autenticacao externa da biblioteca da UFSM. |
-| `app/gestao_riscos/middleware.py` | Exigencia de login, atualizacao de perfil e permissao. |
-| `app/gestao_riscos/permissions.py` | Funcoes e mixins de autorizacao. |
-| `app/gestao_riscos/crud.py` | Views genericas reutilizaveis para CRUD. |
-| `app/usuarios/` | Perfil local de usuarios e formularios de cadastro. |
-| `app/unidades/` | Cadastro de unidades e relacionamento hierarquico. |
-| `app/riscos/` | Cadastro, listagem, edicao, exclusao e impressao de analises de risco. |
-| `app/templates/` | Templates HTML compartilhados e especificos. |
+| `app/gestao_riscos/auth.py` | Backend de autenticação externa da biblioteca da UFSM. |
+| `app/gestao_riscos/middleware.py` | Exigência de login, atualização de perfil e permissão. |
+| `app/gestao_riscos/permissions.py` | Funções e mixins de autorização. |
+| `app/gestao_riscos/crud.py` | Views genéricas reutilizáveis para CRUD. |
+| `app/usuarios/` | Perfil local de usuários e formulários de cadastro. |
+| `app/unidades/` | Cadastro de unidades e relacionamento hierárquico. |
+| `app/riscos/` | Cadastro, listagem, edição, exclusão e impressão de análises de risco. |
+| `app/templates/` | Templates HTML compartilhados e específicos. |
 | `app/static/` | CSS e imagens. |
 | `app/tests/` | Testes automatizados. |
 
-## Fluxo de requisicao
+## Fluxo de requisição
 
-1. O usuario acessa uma URL definida em `gestao_riscos/urls.py`.
-2. O `LoginRequiredMiddleware` associa contexto do usuario atual a requisicao.
-3. O middleware verifica se a rota exige login, perfil atualizado e permissao.
-4. A view correspondente processa a requisicao.
+1. O usuário acessa uma URL definida em `gestao_riscos/urls.py`.
+2. O `LoginRequiredMiddleware` associa contexto do usuário atual à requisição.
+3. O middleware verifica se a rota exige login, perfil atualizado e permissão.
+4. A view correspondente processa a requisição.
 5. Templates em `app/templates/` renderizam a resposta.
 
-## Padrao de CRUD
+## Padrão de CRUD
 
-O arquivo `gestao_riscos/crud.py` centraliza classes base para listagem, formulario e exclusao:
+O arquivo `gestao_riscos/crud.py` centraliza classes base para listagem, formulário e exclusão:
 
 - `CrudListView`
 - `CrudCreateView`
 - `CrudUpdateView`
 - `CrudDeleteView`
 
-Esse padrao reduz duplicacao nas views de usuarios, unidades e riscos. Ao criar um novo CRUD, a abordagem recomendada e reaproveitar essas classes, definindo apenas `model`, `form_class`, `success_url`, titulos e nomes de rotas.
+Esse padrão reduz duplicação nas views de usuários, unidades e riscos. Ao criar um novo CRUD, a abordagem recomendada é reaproveitar essas classes, definindo apenas `model`, `form_class`, `success_url`, títulos e nomes de rotas.
 
 ## Banco de dados
 
@@ -52,11 +52,11 @@ DATABASES = {
 }
 ```
 
-Para producao, o ideal e migrar para um banco gerenciado, como PostgreSQL, e configurar credenciais via variaveis de ambiente.
+Para produção, o ideal é migrar para um banco gerenciado, como PostgreSQL, e configurar credenciais via variáveis de ambiente.
 
-## Templates e arquivos estaticos
+## Templates e arquivos estáticos
 
-Os templates ficam em `app/templates/` e os arquivos estaticos em `app/static/`.
+Os templates ficam em `app/templates/` e os arquivos estáticos em `app/static/`.
 
 O `settings.py` configura:
 
@@ -68,5 +68,5 @@ STATICFILES_DIRS = [
 ]
 ```
 
-Em producao, sera necessario executar `collectstatic` e servir estaticos com uma estrategia adequada, como WhiteNoise, Nginx ou storage externo.
+Em produção, será necessário executar `collectstatic` e servir estáticos com uma estratégia adequada, como WhiteNoise, Nginx ou storage externo.
 

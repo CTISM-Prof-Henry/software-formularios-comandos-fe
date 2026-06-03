@@ -1,6 +1,6 @@
 # Testes e Qualidade
 
-O projeto possui configuracao para `pytest`, `pytest-django`, `coverage` e `pylint`.
+O projeto possui configuração para `pytest`, `pytest-django`, `coverage` e `pylint`.
 
 ## Executar testes com pytest
 
@@ -24,7 +24,7 @@ python -m coverage report
 python -m coverage html
 ```
 
-O relatorio HTML sera gerado em:
+O relatório HTML será gerado em:
 
 ```text
 htmlcov/index.html
@@ -32,7 +32,7 @@ htmlcov/index.html
 
 ## Executar Pylint
 
-Na raiz do repositorio, com o ambiente virtual ativo:
+Na raiz do repositório, com o ambiente virtual ativo:
 
 ```powershell
 python -m pylint app -f colorized
@@ -42,22 +42,22 @@ python -m pylint app -f colorized
 
 | Arquivo | Cobertura principal |
 | --- | --- |
-| `app/tests/test_usuarios.py` | CRUD/listagem de usuarios e acesso a pagina inicial. |
-| `app/tests/test_unidades.py` | Modelo, formulario e CRUD de unidades. |
+| `app/tests/test_usuarios.py` | CRUD/listagem de usuários e acesso à página inicial. |
+| `app/tests/test_unidades.py` | Modelo, formulário e CRUD de unidades. |
 
-## Pontos de atencao nos testes
+## Pontos de atenção nos testes
 
-Os testes atuais fazem requisicoes para rotas administrativas sem criar um usuario autenticado com perfil adequado. Porem o middleware atual exige autenticacao e permissao para rotas protegidas.
+Os testes atuais fazem requisições para rotas administrativas sem criar um usuário autenticado com perfil adequado. Porém o middleware atual exige autenticação e permissão para rotas protegidas.
 
-Isso pode indicar uma destas situacoes:
+Isso pode indicar uma destas situações:
 
-1. os testes foram escritos antes da regra de login obrigatoria;
-2. o middleware foi alterado e os testes nao foram atualizados;
-3. a configuracao de testes deveria desabilitar ou adaptar a autenticacao.
+1. os testes foram escritos antes da regra de login obrigatória;
+2. o middleware foi alterado e os testes não foram atualizados;
+3. a configuração de testes deveria desabilitar ou adaptar a autenticação.
 
-Tecnicamente, a melhor correcao e atualizar os testes para criar usuarios autenticados com os perfis corretos, em vez de relaxar a seguranca da aplicacao.
+Tecnicamente, a melhor correção é atualizar os testes para criar usuários autenticados com os perfis corretos, em vez de relaxar a segurança da aplicação.
 
-Exemplo de estrategia recomendada:
+Exemplo de estratégia recomendada:
 
 ```python
 from django.contrib.auth import get_user_model
@@ -74,14 +74,14 @@ def criar_usuario_admin(client):
     return user
 ```
 
-## Qualidade de codigo
+## Qualidade de código
 
-Boas praticas recomendadas para evoluir o projeto:
+Boas práticas recomendadas para evoluir o projeto:
 
-- manter views pequenas, delegando validacoes para forms e regras de dominio para services quando crescerem;
-- evitar logica de negocio complexa em templates;
-- adicionar testes para autenticacao, permissoes e regras de visibilidade por unidade;
-- cobrir os calculos de `nivel_risco` e `nivel_residual`;
-- revisar strings com encoding quebrado no codigo fonte;
-- nao versionar `.env`, banco local ou arquivos gerados.
+- manter views pequenas, delegando validações para forms e regras de domínio para services quando crescerem;
+- evitar lógica de negócio complexa em templates;
+- adicionar testes para autenticação, permissões e regras de visibilidade por unidade;
+- cobrir os cálculos de `nivel_risco` e `nivel_residual`;
+- revisar strings com encoding quebrado no código fonte;
+- não versionar `.env`, banco local ou arquivos gerados.
 

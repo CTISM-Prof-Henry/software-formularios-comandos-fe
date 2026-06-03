@@ -1,13 +1,13 @@
-# Modulos do Sistema
+# Módulos do Sistema
 
-## Gestao de riscos
+## Gestão de riscos
 
-O app `gestao_riscos` contem a configuracao central do projeto e as regras transversais:
+O app `gestao_riscos` contém a configuração central do projeto e as regras transversais:
 
-- autenticacao;
-- autorizacao;
+- autenticação;
+- autorização;
 - middleware;
-- views de login, logout, dashboard, healthcheck e atualizacao cadastral;
+- views de login, logout, dashboard, healthcheck e atualização cadastral;
 - classes base de CRUD.
 
 Rotas principais:
@@ -16,30 +16,30 @@ Rotas principais:
 | --- | --- | --- |
 | `/` | `index` | Dashboard inicial. |
 | `/login/` | `login` | Tela de login. |
-| `/cadastro-local/` | `local-registration` | Cadastro local de usuario. |
-| `/atualizar-cadastro/` | `atualizar-cadastro` | Complemento de perfil apos login. |
-| `/sem-permissao/` | `sem-permissao` | Pagina de acesso negado. |
-| `/logout/` | `logout` | Encerramento de sessao. |
-| `/health/` | `healthcheck` | Endpoint simples de saude. |
+| `/cadastro-local/` | `local-registration` | Cadastro local de usuário. |
+| `/atualizar-cadastro/` | `atualizar-cadastro` | Complemento de perfil após login. |
+| `/sem-permissao/` | `sem-permissao` | Página de acesso negado. |
+| `/logout/` | `logout` | Encerramento de sessão. |
+| `/health/` | `healthcheck` | Endpoint simples de saúde. |
 
-## Usuarios
+## Usuários
 
-O app `usuarios` gerencia o perfil institucional/local do usuario.
+O app `usuarios` gerencia o perfil institucional/local do usuário.
 
 Modelo principal: `Usuario`.
 
 Campos relevantes:
 
-- `matricula`
-- `nome`
-- `email`
-- `unidade`
-- `perfil_acesso`
-- `senha_local_definida`
+- matrícula;
+- nome;
+- e-mail;
+- unidade;
+- perfil de acesso;
+- senha local definida.
 
 Rotas:
 
-| Rota | Nome | Permissao |
+| Rota | Nome | Permissão |
 | --- | --- | --- |
 | `/usuarios/` | `usuario-list` | Admin |
 | `/usuarios/novo/` | `usuario-create` | Admin |
@@ -48,20 +48,20 @@ Rotas:
 
 ## Unidades
 
-O app `unidades` representa unidades e setores da instituicao.
+O app `unidades` representa unidades e setores da instituição.
 
 Modelo principal: `Unidade`.
 
 Campos relevantes:
 
-- `sigla`
-- `nome`
-- `tipo_unidade`
-- `unidade_pai`
+- sigla;
+- nome;
+- tipo de unidade;
+- unidade pai.
 
 Rotas:
 
-| Rota | Nome | Permissao |
+| Rota | Nome | Permissão |
 | --- | --- | --- |
 | `/unidades/` | `unidade-list` | Admin |
 | `/unidades/novo/` | `unidade-create` | Admin |
@@ -70,7 +70,7 @@ Rotas:
 
 ## Riscos
 
-O app `riscos` concentra o fluxo principal do sistema: analise e tratamento de riscos.
+O app `riscos` concentra o fluxo principal do sistema: análise e tratamento de riscos.
 
 Modelo principal: `Risco`.
 
@@ -84,31 +84,31 @@ Campos relevantes:
 - risco identificado;
 - probabilidade;
 - impacto;
-- nivel de risco calculado;
-- eficacia dos controles;
-- nivel residual calculado;
+- nível de risco calculado;
+- eficácia dos controles;
+- nível residual calculado;
 - resposta;
-- acao;
-- datas de inicio e fim;
-- situacao;
-- usuario e unidade criadores.
+- ação;
+- datas de início e fim;
+- situação;
+- usuário e unidade criadores.
 
 Rotas:
 
-| Rota | Nome | Permissao |
+| Rota | Nome | Permissão |
 | --- | --- | --- |
-| `/riscos/` | `risco-list` | Admin ou Gestao de Riscos |
-| `/riscos/novo/` | `risco-create` | Admin ou Gestao de Riscos |
-| `/riscos/<uuid>/editar/` | `risco-update` | Admin ou usuario autorizado pela unidade |
-| `/riscos/<uuid>/excluir/` | `risco-delete` | Admin ou usuario autorizado pela unidade |
-| `/riscos/<uuid>/imprimir/` | `risco-print` | Admin ou usuario autorizado pela unidade |
+| `/riscos/` | `risco-list` | Admin ou Gestão de Riscos |
+| `/riscos/novo/` | `risco-create` | Admin ou Gestão de Riscos |
+| `/riscos/<uuid>/editar/` | `risco-update` | Admin ou usuário autorizado pela unidade |
+| `/riscos/<uuid>/excluir/` | `risco-delete` | Admin ou usuário autorizado pela unidade |
+| `/riscos/<uuid>/imprimir/` | `risco-print` | Admin ou usuário autorizado pela unidade |
 
 ## Regra de visibilidade dos riscos
 
 Na listagem de riscos:
 
 - administradores enxergam todos os registros;
-- usuarios de gestao de riscos enxergam apenas riscos vinculados as unidades retornadas por `get_current_user_units()`.
+- usuários de gestão de riscos enxergam apenas riscos vinculados às unidades retornadas por `get_current_user_units()`.
 
-Essa regra esta em `RiscoListView.get_queryset()`.
+Essa regra está em `RiscoListView.get_queryset()`.
 
