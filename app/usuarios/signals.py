@@ -8,7 +8,8 @@ from .models import Usuario
 
 
 @receiver(post_save, sender=Usuario, dispatch_uid="usuarios_sync_auth_user_from_profile")
-def sync_auth_user_from_profile(_sender, instance, **_kwargs):
+def sync_auth_user_from_profile(sender, instance, created, **kwargs):
+    _ = sender, created, kwargs
     matricula = (instance.matricula or "").strip()
     if not matricula:
         return
