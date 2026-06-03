@@ -1,187 +1,83 @@
-##  Diagrama UML
-```mermaid
-classDiagram
-    direction TB
+# Comandos FE
 
-    class Usuario {
-        - id : UUID
-        - matricula : String
-        - nome : String
-        - email : String
-        - perfilAcesso : String
-        - senhaLocalDefinida : boolean
-        + autenticarNaBiblioteca() : boolean
-    }
+Sistema web Django para gestao de riscos institucionais.
 
-    class Unidade {
-        - id : UUID
-        - sigla : String
-        - nome : String
-        - tipoUnidade : String
-        - unidadePai : UUID
-    }
+## Documentacao
 
-    class PlanoPDI {
-        - id : UUID
-        - desafio : String
-        - objetivo : String
-    }
+A documentacao tecnica do projeto foi organizada com MkDocs na pasta `docs/`.
 
-    class Macroprocesso {
-        - id : UUID
-        - descricao : String
-    }
+Para executar localmente:
 
-    class Risco {
-        - id : UUID
-        - eventoRisco : String
-        - tipologia : String
-        - causas : List~String~
-        - consequencias : List~String~
-    }
-
-    class Avaliacao {
-        - id : UUID
-        - probabilidade : int
-        - impacto : int
-        - riscoCalculado : int
-        - nivelRiscoInicial : String
-        - controlesInternos : List~String~
-        - eficaciaControles : String
-        - riscoResidual : int
-        - nivelRiscoResidual : String
-        + calcularRiscoInicial() : int
-        + calcularRiscoResidual() : int
-    }
-
-    class Tratamento {
-        - id : UUID
-        - tipoResposta : String
-        - tipoAcao : String
-        - descricaoAcao : String
-        - responsavel : String
-        - parceiros : String
-        - dataInicio : Date
-        - dataFim : Date
-        - situacao : String
-        - observacoes : String
-    }
-
-    class Monitoramento {
-        - id : UUID
-        - resultados : String
-        - acoesFuturas : String
-        - analiseCritica : String
-    }
-
-    Usuario "1..*" -- "1" Unidade
-    Unidade "1" -- "0..*" Risco
-    PlanoPDI "1" -- "0..*" Risco
-    Macroprocesso "1" -- "0..*" Risco
-    Risco "1" *-- "1" Avaliacao
-    Risco "1" *-- "0..1" Tratamento
-    Tratamento "1" *-- "0..*" Monitoramento
+```powershell
+pip install -r requirements-docs.txt
+mkdocs serve
 ```
 
-# Título do repositório
+Por padrao, o MkDocs abre em:
 
-Descrição curta do repositório.
-
-## Sumário
-
-* [Pré-requisitos](#pré-requisitos)
-* [Instalação](#instalação)
-* [Instruções de uso](#instruções-de-uso)
-* [Contato](#contato)
-* [Bibliografia](#bibliografia)
-
-## Pré-requisitos
-
-Descreva aqui brevemente os pré-requisitos necessários para executar o código-fonte. Descreva também
-a configuração mínima da máquina em que o código foi desenvolvido, e se alguma configuração em particular é essencial
-para sua execução (por exemplo, placa de vídeo dedicada):
-
-| Configuração        | Valor                    |
-|---------------------|--------------------------|
-| Sistema operacional | Windows 10 Pro (64 bits) |
-| Processador         | Intel core i7 9700       |
-| Memória RAM         | 16GB                     |
-| Necessita rede?     | Sim                      |
-
-
-## Instalação
-
-Descreva aqui as instruções para instalação das ferramentas para execução do código-fonte: 
-
-```bash
-sudo apt-get install nano
+```text
+http://127.0.0.1:8000/
 ```
 
-## Instruções de Uso
+Se a aplicacao Django ja estiver rodando na porta `8000`, execute a documentacao em outra porta:
 
-Descreva aqui o passo-a-passo que outros usuários precisam realizar para conseguir executar com sucesso o código-fonte
-deste projeto:
-
-```No PowerShell:
-cd D:\repositorios\comandos-fe\app
+```powershell
+mkdocs serve -a 127.0.0.1:8001
 ```
 
-Se ainda não tiver ambiente virtual:
-```Se ainda não tiver ambiente virtual:
+Nesse caso, acesse:
+
+```text
+http://127.0.0.1:8001/
+```
+
+Para gerar o site estatico:
+
+```powershell
+mkdocs build
+```
+
+## Aplicacao
+
+O codigo Django fica na pasta `app/`.
+
+Execucao local resumida:
+
+```powershell
+cd app
 python -m venv ..\.venv
-```
-
-Ativa o ambiente:
-```Ativa o ambiente:
 ..\.venv\Scripts\Activate.ps1
-```
-
-Instala as dependências:
-```Instala as dependências:
 pip install -r requirements.txt
-```
-
-Cria o .env:
-```Cria o .env:
 Copy-Item .env.example .env
-```
-
-Roda as migrations:
-```Roda as migrations:
 python manage.py migrate
+python manage.py runserver
 ```
 
-Sobe o sistema:
-```Sobe o sistema:
-python manage.py runserver
+Acesse:
+
+```text
+http://127.0.0.1:8000/
 ```
 
 ## Testes
 
-Executar os testes:
-```Executar os testes<comandos-fe\app> 
-.\.venv\Scripts\python.exe -m pytest app\tests -v
+```powershell
+cd app
+python -m pytest -v
 ```
 
-## Lint (Pylint)
+Com coverage:
 
-Instalar Pylint:
-```Instalar Pylint
-.\.venv\Scripts\python.exe -m pip install pylint
+```powershell
+python -m coverage run -m pytest -v
+python -m coverage report
+python -m coverage html
 ```
 
-Executar Pylint:
-```Executar Pylint
-.\.venv\Scripts\python.exe -m pylint app -f colorized
+## Qualidade
+
+```powershell
+python -m pylint app -f colorized
 ```
-(Última nota do Pylint: 8.59)
 
-## Contato
-
-O repositório foi originalmente desenvolvido por Fulano: [fulano@ufsm.br]()
-
-## Bibliografia
-
-Adicione aqui entradas numa lista com a documentação pertinente:
-
-* [Documentação coplin-db2](https://pypi.org/project/coplin-db2/)
+Para mais detalhes, consulte a documentacao em `docs/`.
