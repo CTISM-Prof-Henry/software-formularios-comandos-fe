@@ -9,11 +9,16 @@ from django.contrib.auth import (
     logout,
     update_session_auth_hash,
 )
+from django.db.models import Avg, Count
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
+from riscos.models import Risco, SituacaoTratamento, TipoRisco
+from unidades.models import TipoUnidade, Unidade
 from usuarios.forms import AtualizarCadastroForm, CadastroLocalForm
+from usuarios.models import PerfilAcesso, Usuario
 
 from .forms import LoginForm
 from .permissions import can_access_risk_module
@@ -21,7 +26,85 @@ from .user_context import get_usuario_for_django_user, needs_profile_update
 
 
 def index(request):
-    return render(request, "dashboard.html")
+    return render(request, "dashboard.html", _dashboard_context())
+
+
+def _dashboard_context():
+    today = timezone.localdate()
+    total_riscos = Risco.objects.count()
+    total_unidades = Unidade.objects.count()
+    total_usuarios = Usuario.objects.count()
+    riscos_atrasados = Risco.objects.filter(
+        situacao=SituacaoTratamento.ATRASADO,
+    ).count()
+    riscos_em_andamento = Risco.objects.filter(
+        situacao=SituacaoTratamento.EM_ANDAMENTO,
+    ).count()
+    riscos_vencidos = Risco.objects.filter(
+        data_fim__lt=today,
+    ).exclude(situacao=SituacaoTratamento.CONCLUIDO).count()
+    usuarios_com_acesso = Usuario.objects.exclude(
+        perfil_acesso=PerfilAcesso.ESTUDANTE,
+    ).count()
+
+    tipo_counts = {
+        item["tipo_risco"]: item["total"]
+        for item in Risco.objects.values("tipo_risco").annotate(total=Count("id"))
+    }
+    situacao_counts = {
+        item["situacao"]: item["total"]
+        for item in Risco.objects.values("situacao").annotate(total=Count("id"))
+    }
+    perfil_counts = {
+        item["perfil_acesso"]: item["total"]
+        for item in Usuario.objects.values("perfil_acesso").annotate(total=Count("id"))
+    }
+    unidade_counts = {
+        item["tipo_unidade"]: item["total"]
+        for item in Unidade.objects.values("tipo_unidade").annotate(total=Count("id"))
+    }
+
+    media_residual = Risco.objects.aggregate(media=Avg("nivel_residual"))["media"] or 0
+
+    return {
+        "total_riscos": total_riscos,
+        "total_unidades": total_unidades,
+        "total_usuarios": total_usuarios,
+        "riscos_atrasados": riscos_atrasados,
+        "riscos_em_andamento": riscos_em_andamento,
+        "riscos_vencidos": riscos_vencidos,
+        "usuarios_com_acesso": usuarios_com_acesso,
+        "media_residual": round(media_residual, 1),
+        "riscos_por_tipo": _choice_series(TipoRisco.choices, tipo_counts, total_riscos),
+        "riscos_por_situacao": _choice_series(
+            SituacaoTratamento.choices,
+            situacao_counts,
+            total_riscos,
+        ),
+        "usuarios_por_perfil": _choice_series(
+            PerfilAcesso.choices,
+            perfil_counts,
+            total_usuarios,
+        ),
+        "unidades_por_tipo": _choice_series(
+            TipoUnidade.choices,
+            unidade_counts,
+            total_unidades,
+        ),
+        "riscos_recentes": Risco.objects.select_related("unidade")[:5],
+        "unidades_recentes": Unidade.objects.select_related("unidade_pai")[:4],
+    }
+
+
+def _choice_series(choices, counts, total):
+    return [
+        {
+            "label": label,
+            "total": counts.get(value, 0),
+            "percent": round((counts.get(value, 0) / total) * 100) if total else 0,
+        }
+        for value, label in choices
+    ]
 
 
 def login_page(request):
