@@ -33,7 +33,7 @@
                         {% csrf_token %}
                         <div class="form-grid">
                             <div class="login-form-group">
-                                <label class="login-field-label" for="id_matricula">Matricula</label>
+                                <label class="login-field-label" for="id_matricula">Matrícula</label>
                                 <input id="id_matricula" name="matricula" type="text" value="{{ form.matricula.value|default:'' }}" autocomplete="username" autofocus>
                                 {% if form.matricula.errors %}
                                     <span class="field-error">{{ form.matricula.errors|join:", " }}</span>

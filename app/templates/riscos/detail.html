@@ -1,40 +1,40 @@
 {% extends "base.html" %}
 
-{% block title %}Análise de Riscos | Impressão{% endblock %}
+{% block title %}Detalhes do Risco{% endblock %}
 
 {% block content %}
-<div class="page-head print-page-head">
+<div class="page-head detail-page-head">
     <div>
-        <h1>Análise de Riscos</h1>
-        <p class="muted">Ficha completa para impressão ou salvamento em PDF.</p>
+        <h1>Detalhes do Risco</h1>
+        <p class="muted">Visualização completa da identificação, avaliação e tratamento.</p>
     </div>
     <div class="actions">
         <a class="btn btn-secondary" href="{% url 'risco-list' %}">
             <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>Voltar
         </a>
-        <button class="btn" type="button" onclick="window.print()">
-            <i class="fa-solid fa-print" aria-hidden="true"></i>Imprimir/Salvar PDF
-        </button>
+        <a class="btn" href="{% url 'risco-print' risco.pk %}">
+            <i class="fa-solid fa-print" aria-hidden="true"></i>Imprimir
+        </a>
     </div>
 </div>
 
-<article class="print-sheet">
-    <section class="print-section">
+<article class="detail-sheet">
+    <section class="detail-section">
         <h2>Identificação e Análise</h2>
-        <dl class="print-grid">
-            <div><dt>Setor/Departamento</dt><dd>{{ risco.unidade }}</dd></div>
+        <dl class="detail-grid">
+            <div><dt>Unidade</dt><dd>{{ risco.unidade.sigla }}</dd></div>
             <div><dt>Adicionado por</dt><dd>{{ risco.criado_por_display }}</dd></div>
             <div><dt>Tipo de risco</dt><dd>{{ risco.get_tipo_risco_display }}</dd></div>
             <div><dt>Desafio</dt><dd>{{ risco.desafio }}</dd></div>
             <div><dt>Objetivo</dt><dd>{{ risco.objetivo }}</dd></div>
             <div><dt>Macroprocesso</dt><dd>{{ risco.macroprocesso }}</dd></div>
-            <div class="print-grid-full"><dt>Risco identificado</dt><dd>{{ risco.risco_identificado }}</dd></div>
+            <div class="detail-grid-full"><dt>Risco identificado</dt><dd>{{ risco.risco_identificado }}</dd></div>
         </dl>
     </section>
 
-    <section class="print-section">
+    <section class="detail-section">
         <h2>Avaliação</h2>
-        <dl class="print-grid">
+        <dl class="detail-grid">
             <div><dt>Probabilidade</dt><dd>{{ risco.get_probabilidade_display }}</dd></div>
             <div><dt>Impacto</dt><dd>{{ risco.get_impacto_display }}</dd></div>
             <div><dt>Nível de risco</dt><dd>{{ risco.nivel_risco }} - {{ risco.nivel_risco_display }}</dd></div>
@@ -44,9 +44,9 @@
         </dl>
     </section>
 
-    <section class="print-section">
+    <section class="detail-section">
         <h2>Tratamento</h2>
-        <dl class="print-grid">
+        <dl class="detail-grid">
             <div><dt>Resposta</dt><dd>{{ risco.get_resposta_display }}</dd></div>
             <div><dt>Ação</dt><dd>{{ risco.get_acao_display }}</dd></div>
             <div><dt>Data de início</dt><dd>{{ risco.data_inicio|date:"d/m/Y" }}</dd></div>

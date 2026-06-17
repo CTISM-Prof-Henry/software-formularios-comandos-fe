@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load riscos_text %}
 
 {% block title %}{{ page_title }}{% endblock %}
 
@@ -10,34 +11,53 @@
         <p class="muted">{{ page_description }}</p>
         {% endif %}
     </div>
-    {% if create_url %}
-    <a class="btn" href="{{ create_url }}">{{ create_label|default:"Novo" }}</a>
+    {% if create_url and can_create_risco %}
+    <a class="btn" href="{{ create_url }}"><i class="fa-solid fa-plus" aria-hidden="true"></i>{{ create_label|default:"Novo" }}</a>
     {% endif %}
 </div>
 
-<div class="card">
+<section class="data-card">
     {% if objects %}
-        <div class="list-stack">
-        {% for obj in objects %}
-        <div class="list-item">
-            <div>
-                <strong>{{ obj.unidade }}</strong>
-                <p class="muted list-meta">{{ obj.objetivo.codigo }} | {{ obj.macroprocesso }} | Nivel {{ obj.nivel_risco }}</p>
-                <p class="muted list-meta">Adicionado por {{ obj.criado_por_display }}</p>
-                <p>{{ obj.risco_identificado }}</p>
-            </div>
-            <div class="actions">
-                <a class="btn btn-secondary" href="{% url 'risco-print' obj.pk %}">Imprimir/Salvar PDF</a>
-                {% if obj.pode_ser_editado_pelo_usuario_atual %}
-                <a class="btn btn-secondary" href="{% url update_name obj.pk %}">Editar</a>
-                <a class="btn btn-danger" href="{% url delete_name obj.pk %}">Excluir</a>
-                {% endif %}
-            </div>
-        </div>
-        {% endfor %}
+        <div class="data-table-wrap">
+            <table class="data-table risk-table">
+                <thead>
+                    <tr>
+                        <th>Unidade</th>
+                        <th>Risco identificado</th>
+                        <th>Tipo</th>
+                        <th>Situação</th>
+                        <th class="actions-col">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for obj in objects %}
+                    <tr>
+                        <td><strong>{{ obj.unidade.sigla }}</strong></td>
+                        <td class="risk-summary" title="{{ obj.risco_identificado }}">{{ obj.risco_identificado|limite_palavras:3 }}</td>
+                        <td>{{ obj.get_tipo_risco_display }}</td>
+                        <td><span class="status-pill">{{ obj.get_situacao_display }}</span></td>
+                        <td class="table-actions">
+                            <div class="table-actions-inner">
+                                <a class="btn-icon" href="{% url 'risco-print' obj.pk %}" title="Visualizar impressão" aria-label="Visualizar impressão do risco">
+                                    <i class="fa-solid fa-eye" aria-hidden="true"></i>
+                                </a>
+                                {% if obj.pode_ser_editado_pelo_usuario_atual %}
+                                <a class="btn-icon btn-edit" href="{% url update_name obj.pk %}" title="Editar" aria-label="Editar risco">
+                                    <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
+                                </a>
+                                <a class="btn-icon btn-delete" href="{% url delete_name obj.pk %}" title="Excluir" aria-label="Excluir risco">
+                                    <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
+                                </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     {% else %}
         <p class="muted empty-state">Nenhum registro.</p>
     {% endif %}
-</div>
+</section>
 {% endblock %}

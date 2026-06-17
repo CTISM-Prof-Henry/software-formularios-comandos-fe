@@ -3,7 +3,7 @@
 {% block title %}{{ page_title }}{% endblock %}
 
 {% block content %}
-<div class="page-head">
+<div class="page-head form-page-head">
     <div>
         <h1>{{ page_title }}</h1>
         {% if page_description %}
@@ -12,14 +12,14 @@
     </div>
 </div>
 
-<div class="card">
-    <p>Confirmar exclusao de <strong>{{ object }}</strong>?</p>
+<section class="form-card delete-card">
+    <p>Confirmar exclusão de <strong>{{ object }}</strong>?</p>
     <form method="post">
         {% csrf_token %}
-        <div class="actions">
-            <button class="btn btn-danger" type="submit">{{ delete_label|default:"Excluir" }}</button>
-            <a class="btn btn-secondary" href="{{ cancel_url|default:'javascript:history.back()' }}">Cancelar</a>
+        <div class="actions form-actions-right">
+            <a class="btn btn-secondary" href="{{ cancel_url|default:'javascript:history.back()' }}"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i>Cancelar</a>
+            <button class="btn btn-danger" type="submit"><i class="fa-solid fa-trash-can" aria-hidden="true"></i>{{ delete_label|default:"Excluir" }}</button>
         </div>
     </form>
-</div>
+</section>
 {% endblock %}

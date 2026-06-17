@@ -5,7 +5,7 @@ from unidades.models import Unidade
 from usuarios.models import Usuario
 
 CURRENT_USER_NAME = "Fulano"
-CURRENT_USER_DEPARTMENT_NAME = "Politecnico"
+CURRENT_USER_DEPARTMENT_NAME = "Politécnico"
 
 
 def get_current_user():
@@ -50,59 +50,39 @@ def get_current_user_department():
     usuario = get_current_user()
     if usuario and usuario.unidade:
         return usuario.unidade
-    return _get_default_department()
+    return None
 
 
 def get_current_user_units():
-    request = get_current_request()
-    if (
-        request
-        and request.user.is_authenticated
-        and _is_current_user_admin(request.user)
-    ):
-        return Unidade.objects.all().order_by("sigla")
-
     departamento = get_current_user_department()
     if not departamento:
         return Unidade.objects.none()
+    return Unidade.objects.filter(id__in=get_current_user_unit_ids())
 
-    unidades_ids = [departamento.id]
-    unidades_vistas = {departamento.id}
+
+def get_current_user_unit_ids():
+    departamento = get_current_user_department()
+    if not departamento:
+        return []
+
+    unidade_ids = [departamento.id]
+    visitadas = {departamento.id}
     pendentes = [departamento.id]
 
     while pendentes:
         filhas_ids = list(
             Unidade.objects.filter(unidade_pai_id__in=pendentes).values_list("id", flat=True)
         )
-        novas_ids = [unidade_id for unidade_id in filhas_ids if unidade_id not in unidades_vistas]
-        unidades_ids.extend(novas_ids)
-        unidades_vistas.update(novas_ids)
+        novas_ids = [unidade_id for unidade_id in filhas_ids if unidade_id not in visitadas]
+        unidade_ids.extend(novas_ids)
+        visitadas.update(novas_ids)
         pendentes = novas_ids
 
-    return Unidade.objects.filter(id__in=unidades_ids).order_by("sigla")
+    return unidade_ids
 
 
 def user_can_manage_risco(risco):
-    request = get_current_request()
-    if request and request.user.is_authenticated and _is_current_user_admin(request.user):
-        return True
-
-    departamento = get_current_user_department()
-    if not departamento:
-        return False
-
-    unidade = risco.unidade
-    while unidade:
-        if unidade == departamento:
-            return True
-        unidade = unidade.unidade_pai
-    return False
-
-
-def _is_current_user_admin(user):
-    from gestao_riscos.permissions import is_admin
-
-    return is_admin(user)
+    return risco.unidade_id in get_current_user_unit_ids()
 
 
 def _get_default_department():
@@ -110,5 +90,6 @@ def _get_default_department():
         Unidade.objects.filter(sigla__iexact="POLITECNICO").first()
         or Unidade.objects.filter(sigla__iexact="POLI").first()
         or Unidade.objects.filter(nome__icontains="Politécnico").first()
+        or Unidade.objects.filter(nome__icontains="Politecnico").first()
         or Unidade.objects.filter(nome__icontains=CURRENT_USER_DEPARTMENT_NAME).first()
     )

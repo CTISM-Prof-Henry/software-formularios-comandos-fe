@@ -167,7 +167,7 @@ def local_registration(request):
         form = CadastroLocalForm(request.POST)
         if form.is_valid():
             usuario = form.save()
-            messages.success(request, "Conta local criada. Entre usando a opcao Sistema.")
+            messages.success(request, "Conta local criada. Entre usando a opção Sistema.")
             query = urlencode(
                 {
                     "auth_source": "local",
@@ -219,17 +219,23 @@ def _append_login_error(form, auth_source, matricula):
     if auth_source == "local":
         user_model = get_user_model()
         user = user_model.objects.filter(username__iexact=matricula).first()
-        if user is None or not user.has_usable_password():
+        if user is None:
             form.add_error(
                 None,
-                "Conta local nao encontrada. Crie seu cadastro local ou "
-                "entre com a matricula da UFSM.",
+                "Conta local não encontrada. Crie seu cadastro local ou "
+                "entre com a matrícula da UFSM.",
             )
             return
-        form.add_error(None, "Matricula ou senha local invalidas.")
+        if not user.has_usable_password():
+            form.add_error(
+                None,
+                "Conta local sem senha definida. Solicite ao administrador o reset da senha.",
+            )
+            return
+        form.add_error(None, "Matrícula ou senha local inválidas.")
         return
 
-    form.add_error(None, "Matricula ou senha da biblioteca invalidas.")
+    form.add_error(None, "Matrícula ou senha da biblioteca inválidas.")
 
 
 def _get_safe_next_url(request):

@@ -3,7 +3,7 @@
 {% block title %}{{ page_title }}{% endblock %}
 
 {% block content %}
-<div class="page-head">
+<div class="page-head form-page-head">
     <div>
         <h1>{{ page_title }}</h1>
         {% if page_description %}
@@ -12,14 +12,17 @@
     </div>
 </div>
 
-<div class="card">
-    <form method="post">
+<section class="form-card">
+    <form method="post" class="crud-form">
         {% csrf_token %}
         {{ form.as_p }}
-        <div class="actions">
-            <button class="btn" type="submit">{{ submit_label|default:"Salvar" }}</button>
-            <a class="btn btn-secondary" href="{{ cancel_url|default:'javascript:history.back()' }}">Voltar</a>
+        <div class="actions form-actions-right">
+            {% if extra_form_action_url %}
+            <a class="btn btn-secondary" href="{{ extra_form_action_url }}"><i class="fa-solid {{ extra_form_action_icon|default:'fa-key' }}" aria-hidden="true"></i>{{ extra_form_action_label }}</a>
+            {% endif %}
+            <a class="btn btn-secondary" href="{{ cancel_url|default:'javascript:history.back()' }}"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i>Voltar</a>
+            <button class="btn" type="submit"><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i>{{ submit_label|default:"Salvar" }}</button>
         </div>
     </form>
-</div>
+</section>
 {% endblock %}

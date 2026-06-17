@@ -1,4 +1,5 @@
 import uuid
+from decimal import Decimal, ROUND_HALF_UP
 
 from django.db import models
 
@@ -128,7 +129,7 @@ class Risco(models.Model):
     data_inicio = models.DateField()
     data_fim = models.DateField()
     situacao = models.CharField(max_length=30, choices=SituacaoTratamento.choices)
-    criado_por_nome = models.CharField(max_length=150, default="Usuario")
+    criado_por_nome = models.CharField(max_length=150, default="Usuário")
     criado_por_unidade = models.ForeignKey(
         "unidades.Unidade",
         null=True,
@@ -145,7 +146,7 @@ class Risco(models.Model):
         verbose_name_plural = "Riscos"
 
     def save(self, *args, **kwargs):
-        if not self.criado_por_nome or self.criado_por_nome == "Usuario":
+        if not self.criado_por_nome or self.criado_por_nome in {"Usuario", "Usuário"}:
             from .current_user import get_current_user_name
 
             self.criado_por_nome = get_current_user_name()
@@ -158,20 +159,42 @@ class Risco(models.Model):
         super().save(*args, **kwargs)
 
     def _calcular_nivel_residual(self):
-        reducoes = {
-            EficaciaControle.INEXISTENTE: 0,
-            EficaciaControle.FRACA: 1,
-            EficaciaControle.MEDIANA: 2,
-            EficaciaControle.SATISFATORIA: 3,
-            EficaciaControle.FORTE: 4,
+        fatores = {
+            EficaciaControle.INEXISTENTE: Decimal("1"),
+            EficaciaControle.FRACA: Decimal("0.8"),
+            EficaciaControle.MEDIANA: Decimal("0.6"),
+            EficaciaControle.SATISFATORIA: Decimal("0.4"),
+            EficaciaControle.FORTE: Decimal("0.2"),
         }
-        return max(self.nivel_risco - reducoes.get(self.eficacia_controles, 0), 1)
+        fator = fatores.get(self.eficacia_controles, Decimal("1"))
+        return int(
+            (Decimal(self.nivel_risco) * fator).quantize(
+                Decimal("1"),
+                rounding=ROUND_HALF_UP,
+            )
+        )
+
+    @staticmethod
+    def classificar_nivel(nivel):
+        if nivel < 4:
+            return "Risco Baixo"
+        if nivel < 12:
+            return "Risco Moderado"
+        if nivel < 20:
+            return "Risco Alto"
+        return "Risco Extremo"
+
+    def nivel_risco_display(self):
+        return self.classificar_nivel(self.nivel_risco)
+
+    def nivel_residual_display(self):
+        return self.classificar_nivel(self.nivel_residual)
 
     def __str__(self):
         return f"{self.unidade} - {str(self.risco_identificado)[:60]}"
 
     def criado_por_display(self):
-        unidade = self.criado_por_unidade or "Politecnico"
+        unidade = self.criado_por_unidade or "Politécnico"
         return f"{self.criado_por_nome} - {unidade}"
 
     def pode_ser_editado_pelo_usuario_atual(self):

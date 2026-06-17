@@ -201,12 +201,13 @@ body {
     cursor: pointer;
     font-size: 11px;
     font-weight: 600;
-    background: linear-gradient(90deg, #3a44ef 0%, #5d34da 100%);
+    background: var(--navy);
     text-decoration: none;
+    transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
 }
 
 .login-card .btn:hover {
-    background: linear-gradient(90deg, #2f39dd 0%, #4d2bc8 100%);
+    background: var(--navy-dark);
 }
 
 .login-card .btn-secondary,
@@ -263,6 +264,12 @@ body {
     text-decoration: none;
     font-size: 12px;
     font-weight: 600;
+    transition: background 0.18s ease, border-color 0.18s ease;
+}
+
+.contact-btn:hover {
+    background: var(--navy-dark);
+    border-color: var(--navy-dark);
 }
 
 .alert-error {

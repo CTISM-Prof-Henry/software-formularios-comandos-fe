@@ -41,13 +41,24 @@ class RiscoForm(forms.ModelForm):
             "risco_identificado": "Risco identificado",
             "probabilidade": "Probabilidade",
             "impacto": "Impacto",
-            "eficacia_controles": "Eficacia dos controles internos",
+            "eficacia_controles": "Eficácia dos controles internos",
             "resposta": "Resposta",
             "acao": "Ação",
             "data_inicio": "Data de início",
             "data_fim": "Data de fim",
-            "situacao": "Situacao",
+            "situacao": "Situação",
         }
+
+    def clean_unidade(self):
+        unidade = self.cleaned_data.get("unidade")
+        unidades_permitidas = get_current_user_units()
+        if not unidades_permitidas.exists():
+            raise forms.ValidationError("Você precisa ter uma unidade alocada para criar riscos.")
+        if unidade and not unidades_permitidas.filter(id=unidade.id).exists():
+            raise forms.ValidationError(
+                "Você só pode criar ou editar riscos da sua unidade alocada ou de unidades filhas."
+            )
+        return unidade
 
     def clean(self):
         cleaned_data = super().clean()
@@ -56,7 +67,10 @@ class RiscoForm(forms.ModelForm):
         desafio = cleaned_data.get("desafio")
         objetivo = cleaned_data.get("objetivo")
         if data_inicio and data_fim and data_fim < data_inicio:
-            self.add_error("data_fim", "A data de fim deve ser maior ou igual à data de início.")
+            self.add_error(
+                "data_fim",
+                "A data de fim deve ser maior ou igual à data de início.",
+            )
         if desafio and objetivo and objetivo.desafio_id != desafio.id:
             self.add_error("objetivo", "Selecione um objetivo vinculado ao desafio escolhido.")
         return cleaned_data

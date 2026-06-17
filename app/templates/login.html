@@ -43,7 +43,7 @@
                             </label>
                         </div>
                         <div class="login-form-group">
-                            <label class="login-field-label" for="id_matricula">Matricula</label>
+                            <label class="login-field-label" for="id_matricula">Matrícula</label>
                             <input id="id_matricula" name="matricula" type="text" value="{{ form.matricula.value|default:'' }}" autocomplete="username" autofocus>
                             {% if form.matricula.errors %}
                                 <span class="field-error">{{ form.matricula.errors|join:", " }}</span>
@@ -59,7 +59,6 @@
                         <button class="btn" style="width:100%;" type="submit">Entrar</button>
                         <div class="actions-row actions-row--stacked">
                             <a class="btn btn-secondary" data-local-register-link href="{% url 'local-registration' %}">Criar conta local</a>
-                            <span class="helper-text" data-auth-hint>Primeiro acesso com matricula UFSM? Use a opcao UFSM.</span>
                         </div>
                     </form>
                 </div>
@@ -86,8 +85,8 @@
             const selectedSource = document.querySelector('input[name="auth_source"]:checked')?.value || "ufsm";
             const matricula = matriculaInput ? matriculaInput.value.trim() : "";
             authHint.textContent = selectedSource === "local"
-                ? "Nao tem conta local ainda? Crie seu cadastro."
-                : "Primeiro acesso com matricula UFSM? Use a opcao UFSM.";
+                ? "Não tem conta local ainda? Crie seu cadastro."
+                : "Primeiro acesso com matrícula UFSM? Use a opção UFSM.";
 
             if (matricula) {
                 registerLink.setAttribute("href", `${baseHref}?matricula=${encodeURIComponent(matricula)}`);

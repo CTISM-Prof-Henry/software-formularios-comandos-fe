@@ -17,17 +17,8 @@ def sync_auth_user_from_profile(sender, instance, created, **kwargs):
     user_model = get_user_model()
     user = user_model.objects.filter(username__iexact=matricula).first()
     if user is None:
-        return
+        user = user_model(username=matricula)
+        user.set_unusable_password()
 
     sync_user_with_profile(user, usuario=instance)
-    user.save(
-        update_fields=[
-            "username",
-            "email",
-            "first_name",
-            "last_name",
-            "is_staff",
-            "is_superuser",
-            "is_active",
-        ]
-    )
+    user.save()

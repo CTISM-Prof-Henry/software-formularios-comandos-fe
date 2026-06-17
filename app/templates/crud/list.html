@@ -11,27 +11,105 @@
         {% endif %}
     </div>
     {% if create_url %}
-    <a class="btn" href="{{ create_url }}">{{ create_label|default:"Novo" }}</a>
+    <a class="btn" href="{{ create_url }}"><i class="fa-solid fa-plus" aria-hidden="true"></i>{{ create_label|default:"Novo" }}</a>
     {% endif %}
 </div>
 
-<div class="card">
+<section class="data-card">
     {% if objects %}
-        <div class="list-stack">
-        {% for obj in objects %}
-        <div class="list-item">
-            <div>
-                <strong>{{ obj }}</strong>
-            </div>
-            <div class="actions">
-                <a class="btn btn-secondary" href="{% url update_name obj.pk %}">Editar</a>
-                <a class="btn btn-danger" href="{% url delete_name obj.pk %}">Excluir</a>
-            </div>
-        </div>
-        {% endfor %}
+        <div class="data-table-wrap">
+            <table class="data-table data-table--{{ list_model_name }}">
+                {% if list_model_name == "unidade" %}
+                <thead>
+                    <tr>
+                        <th>Sigla</th>
+                        <th>Nome</th>
+                        <th>Tipo</th>
+                        <th>Vínculo</th>
+                        <th class="actions-col">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for obj in objects %}
+                    <tr>
+                        <td><strong>{{ obj.sigla }}</strong></td>
+                        <td>{{ obj.nome }}</td>
+                        <td>{{ obj.get_tipo_unidade_display }}</td>
+                        <td>{% if obj.unidade_pai %}{{ obj.unidade_pai }}{% else %}<span class="muted">-</span>{% endif %}</td>
+                        <td class="table-actions">
+                            <div class="table-actions-inner">
+                                <a class="btn-icon btn-edit" href="{% url update_name obj.pk %}" title="Editar" aria-label="Editar {{ obj }}">
+                                    <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
+                                </a>
+                                <a class="btn-icon btn-delete" href="{% url delete_name obj.pk %}" title="Excluir" aria-label="Excluir {{ obj }}">
+                                    <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                {% elif list_model_name == "usuario" %}
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Matrícula</th>
+                        <th>E-mail</th>
+                        <th>Unidade</th>
+                        <th>Perfil</th>
+                        <th class="actions-col">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for obj in objects %}
+                    <tr>
+                        <td><strong>{{ obj.nome|default:"-" }}</strong></td>
+                        <td>{{ obj.matricula|default:"-" }}</td>
+                        <td>{{ obj.email|default:"-" }}</td>
+                        <td>{% if obj.unidade %}{{ obj.unidade.sigla }}{% else %}<span class="muted">-</span>{% endif %}</td>
+                        <td><span class="status-pill">{{ obj.get_perfil_acesso_display }}</span></td>
+                        <td class="table-actions">
+                            <div class="table-actions-inner">
+                                <a class="btn-icon btn-edit" href="{% url update_name obj.pk %}" title="Editar" aria-label="Editar {{ obj }}">
+                                    <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
+                                </a>
+                                <a class="btn-icon btn-delete" href="{% url delete_name obj.pk %}" title="Excluir" aria-label="Excluir {{ obj }}">
+                                    <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                {% else %}
+                <thead>
+                    <tr>
+                        <th>Registro</th>
+                        <th class="actions-col">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for obj in objects %}
+                    <tr>
+                        <td><strong>{{ obj }}</strong></td>
+                        <td class="table-actions">
+                            <div class="table-actions-inner">
+                                <a class="btn-icon btn-edit" href="{% url update_name obj.pk %}" title="Editar" aria-label="Editar {{ obj }}">
+                                    <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
+                                </a>
+                                <a class="btn-icon btn-delete" href="{% url delete_name obj.pk %}" title="Excluir" aria-label="Excluir {{ obj }}">
+                                    <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                {% endif %}
+            </table>
         </div>
     {% else %}
         <p class="muted empty-state">Nenhum registro.</p>
     {% endif %}
-</div>
+</section>
 {% endblock %}

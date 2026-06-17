@@ -13,7 +13,7 @@ class LoginForm(forms.Form):
         widget=forms.RadioSelect,
     )
     matricula = forms.CharField(
-        label="Matricula",
+        label="Matrícula",
         max_length=30,
         widget=forms.TextInput(attrs={"autocomplete": "username", "autofocus": True}),
     )

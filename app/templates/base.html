@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Comandos FE{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="{% static 'css/app.css' %}">
     {% block extra_css %}{% endblock %}
 </head>
@@ -14,17 +15,35 @@
         <aside class="sidebar">
             <div class="brand">
                 <div class="brand-mark">
-                    <div class="brand-name">Comandos FE</div>
+                    <img class="brand-sidebar-logo" src="{% static 'assets/logo-comandos-fe-transparent.png' %}" alt="Comandos FE">
                 </div>
             </div>
             <nav class="nav-links">
-                <a class="{% if request.path == '/' %}active{% endif %}" href="{% url 'index' %}">Pagina Inicial</a>
+                <div class="nav-section-title">Principal</div>
+                <a class="{% if request.path == '/' %}active{% endif %}" href="{% url 'index' %}">
+                    <i class="nav-link-icon fa-solid fa-house" aria-hidden="true"></i>
+                    <span class="nav-link-text">Página Inicial</span>
+                </a>
                 {% if request.perms_context.is_admin %}
-                <a class="{% if '/riscos/' in request.path %}active{% endif %}" href="{% url 'risco-list' %}">Riscos</a>
-                <a class="{% if request.path == '/unidades/' %}active{% endif %}" href="{% url 'unidade-list' %}">Unidades</a>
-                <a class="{% if request.path == '/usuarios/' %}active{% endif %}" href="{% url 'usuario-list' %}">Usuarios</a>
+                <div class="nav-section-title">Gerenciamento</div>
+                <a class="{% if '/riscos/' in request.path %}active{% endif %}" href="{% url 'risco-list' %}">
+                    <i class="nav-link-icon fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+                    <span class="nav-link-text">Riscos</span>
+                </a>
+                <a class="{% if request.path == '/unidades/' %}active{% endif %}" href="{% url 'unidade-list' %}">
+                    <i class="nav-link-icon fa-solid fa-building" aria-hidden="true"></i>
+                    <span class="nav-link-text">Unidades</span>
+                </a>
+                <a class="{% if request.path == '/usuarios/' %}active{% endif %}" href="{% url 'usuario-list' %}">
+                    <i class="nav-link-icon fa-solid fa-users" aria-hidden="true"></i>
+                    <span class="nav-link-text">Usuários</span>
+                </a>
                 {% elif request.perms_context.can_access_risks %}
-                <a class="{% if '/riscos/' in request.path %}active{% endif %}" href="{% url 'risco-list' %}">Riscos</a>
+                <div class="nav-section-title">Gerenciamento</div>
+                <a class="{% if '/riscos/' in request.path %}active{% endif %}" href="{% url 'risco-list' %}">
+                    <i class="nav-link-icon fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+                    <span class="nav-link-text">Riscos</span>
+                </a>
                 {% endif %}
             </nav>
             <div class="sidebar-spacer"></div>
@@ -40,7 +59,7 @@
     <div class="modal-backdrop" data-logout-modal hidden>
         <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="logout-modal-title">
             <h2 id="logout-modal-title">Sair do sistema?</h2>
-            <p>Voce vai encerrar sua sessao atual.</p>
+            <p>Você vai encerrar sua sessão atual.</p>
             <div class="modal-actions">
                 <button class="btn btn-secondary" type="button" data-close-logout-modal>Cancelar</button>
                 <button class="btn btn-primary" type="submit" form="logout-form">Sair</button>

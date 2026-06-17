@@ -5,15 +5,15 @@
 {% block content %}
 <div class="dashboard-hero">
     <div>
-        <span class="eyebrow">Visao geral</span>
+        <span class="eyebrow">Visão geral</span>
         <h1>Dashboard</h1>
-        <p class="muted">Acompanhe os riscos cadastrados, a distribuicao por unidade e a situacao dos planos de tratamento.</p>
+        <p class="muted">Acompanhe os riscos cadastrados, a distribuição por unidade e a situação dos planos de tratamento.</p>
     </div>
     {% if request.perms_context.is_admin or request.perms_context.can_access_risks %}
     <div class="hero-actions">
         <a class="btn btn-secondary" href="{% url 'risco-list' %}">Ver riscos</a>
         {% if request.perms_context.is_admin %}
-        <a class="btn" href="{% url 'usuario-list' %}">Usuarios</a>
+        <a class="btn" href="{% url 'usuario-list' %}">Usuários</a>
         {% endif %}
     </div>
     {% endif %}
@@ -27,9 +27,9 @@
         <small>{{ riscos_em_andamento }} em andamento</small>
     </article>
     <article class="metric-card">
-        <span class="metric-label">Nivel residual medio</span>
+        <span class="metric-label">Nível residual médio</span>
         <strong>{{ media_residual }}</strong>
-        <small>media dos riscos apos controles</small>
+        <small>média dos riscos após controles</small>
     </article>
     <article class="metric-card">
         <span class="metric-label">Planos atrasados</span>
@@ -39,7 +39,7 @@
     <article class="metric-card">
         <span class="metric-label">Unidades mapeadas</span>
         <strong>{{ total_unidades }}</strong>
-        <small>{{ usuarios_com_acesso }} usuarios com acesso ao sistema</small>
+        <small>{{ usuarios_com_acesso }} usuários com acesso ao sistema</small>
     </article>
 </section>
 
@@ -48,7 +48,7 @@
         <div class="section-head">
             <div>
                 <span class="eyebrow">Riscos</span>
-                <h2>Distribuicao por tipo</h2>
+                <h2>Distribuição por tipo</h2>
             </div>
             <span class="pill">{{ total_riscos }} total</span>
         </div>
@@ -71,7 +71,7 @@
         <div class="section-head">
             <div>
                 <span class="eyebrow">Tratamento</span>
-                <h2>Situacao dos planos</h2>
+                <h2>Situação dos planos</h2>
             </div>
         </div>
         <div class="donut-layout">
@@ -93,9 +93,9 @@
         <div class="section-head">
             <div>
                 <span class="eyebrow">Acessos</span>
-                <h2>Usuarios por perfil</h2>
+                <h2>Usuários por perfil</h2>
             </div>
-            <span class="pill">{{ total_usuarios }} usuarios</span>
+            <span class="pill">{{ total_usuarios }} usuários</span>
         </div>
         <div class="bar-list compact-bars">
             {% for item in usuarios_por_perfil %}
@@ -162,7 +162,7 @@
 </section>
 {% else %}
 <div class="card">
-    <p class="muted empty-state">Seu usuario esta autenticado, mas ainda nao recebeu um perfil de acesso.</p>
+    <p class="muted empty-state">Seu usuário está autenticado, mas ainda não recebeu um perfil de acesso.</p>
 </div>
 {% endif %}
 {% endblock %}

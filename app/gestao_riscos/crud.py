@@ -35,6 +35,7 @@ class CrudListView(PageContextMixin, ListView):
         context["update_name"] = self.update_url_name
         context["delete_name"] = self.delete_url_name
         context["create_label"] = self.create_label
+        context["list_model_name"] = self.model._meta.model_name
         return context
 
 

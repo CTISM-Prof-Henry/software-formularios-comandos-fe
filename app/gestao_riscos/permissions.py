@@ -11,9 +11,12 @@ GESTAO_RISCOS_ROLE = "gestao-riscos"
 def has_role(user, role, usuario=None):
     if not user.is_authenticated:
         return False
-    if user.is_superuser or user.groups.filter(name=role).exists():
-        return True
-    return _has_local_profile_role(user, role, usuario=usuario)
+
+    usuario = usuario or get_usuario_for_django_user(user)
+    if usuario:
+        return _has_local_profile_role(user, role, usuario=usuario)
+
+    return user.is_superuser or user.groups.filter(name=role).exists()
 
 
 def is_admin(user, usuario=None):
@@ -29,11 +32,7 @@ def is_risk_manager(user, usuario=None):
 
 
 def can_access_risk_module(user, usuario=None):
-    return is_admin(user, usuario=usuario) or has_role(
-        user,
-        GESTAO_RISCOS_ROLE,
-        usuario=usuario,
-    )
+    return is_admin(user, usuario=usuario) or is_risk_manager(user, usuario=usuario)
 
 
 def build_permissions_context(user, usuario=None):
@@ -61,14 +60,19 @@ class AdminRequiredMixin(RoleRequiredMixin):
     required_roles = (ADMIN_ROLE,)
 
 
-class RiskModuleRequiredMixin(RoleRequiredMixin):
-    required_roles = (ADMIN_ROLE, GESTAO_RISCOS_ROLE)
+class RiskModuleRequiredMixin(UserPassesTestMixin):
+    def test_func(self):
+        return can_access_risk_module(self.request.user)
+
+    def handle_no_permission(self):
+        if self.request.user.is_authenticated:
+            return redirect("sem-permissao")
+        return super().handle_no_permission()
 
 
-def _has_local_profile_role(user, role, usuario=None):
+def _has_local_profile_role(_user, role, usuario=None):
     from usuarios.models import PerfilAcesso
 
-    usuario = usuario or get_usuario_for_django_user(user)
     if not usuario:
         return False
 

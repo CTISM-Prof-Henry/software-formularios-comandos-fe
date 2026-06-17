@@ -71,7 +71,10 @@ class LoginRequiredMiddleware:
         if self._is_public_path(request.path, public_paths):
             return False
 
-        return not can_access_risk_module(request.user, usuario=request.current_usuario)
+        if request.path.startswith(reverse("risco-list")):
+            return not can_access_risk_module(request.user, usuario=request.current_usuario)
+
+        return False
 
     def _requires_profile_update(self, request):
         if not request.user.is_authenticated:

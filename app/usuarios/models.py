@@ -31,10 +31,10 @@ class Usuario(models.Model):
 
     class Meta:
         ordering = ["nome"]
-        verbose_name = "Usuario"
+        verbose_name = "Usuário"
         verbose_name_plural = "Usuários"
 
     def __str__(self):
         if self.matricula:
             return f"{self.nome} ({self.matricula})"
-        return self.nome or self.email or "Usuario"
+        return self.nome or self.email or "Usuário"

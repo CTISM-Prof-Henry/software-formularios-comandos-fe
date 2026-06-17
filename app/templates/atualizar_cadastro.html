@@ -6,7 +6,7 @@
 <div class="page-head">
     <div>
         <h1>Atualizar cadastro</h1>
-        <p class="muted">Complete seu vinculo no sistema e defina uma senha local para os proximos acessos.</p>
+        <p class="muted">Complete seu vínculo no sistema e defina uma senha local para os próximos acessos.</p>
     </div>
 </div>
 
@@ -15,7 +15,7 @@
         {% csrf_token %}
         {{ form.non_field_errors }}
         <p>
-            <label>Matricula</label>
+            <label>Matrícula</label>
             <input type="text" value="{{ request.user.username }}" disabled>
         </p>
         <p>

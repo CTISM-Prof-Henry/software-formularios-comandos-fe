@@ -18,7 +18,7 @@
         {{ form.non_field_errors }}
 
         <section class="risk-section">
-            <h2>1. Identificacao e Analise</h2>
+            <h2>1. Identificação e Análise</h2>
             <div class="form-grid two">
                 <div class="field">{{ form.unidade.label_tag }}{{ form.unidade }}{{ form.unidade.errors }}</div>
                 <div class="field">{{ form.tipo_risco.label_tag }}{{ form.tipo_risco }}{{ form.tipo_risco.errors }}</div>
@@ -32,22 +32,22 @@
         </section>
 
         <section class="risk-section">
-            <h2>2. Avaliacao</h2>
+            <h2>2. Avaliação</h2>
             <div class="form-grid two">
                 <div class="field">{{ form.probabilidade.label_tag }}{{ form.probabilidade }}{{ form.probabilidade.errors }}</div>
                 <div class="field">{{ form.impacto.label_tag }}{{ form.impacto }}{{ form.impacto.errors }}</div>
             </div>
             <div class="readonly-grid">
                 <div class="field">
-                    <label>Nivel de risco</label>
-                    <input type="text" value="{% if object %}{{ object.nivel_risco }}{% else %}Calculado automaticamente{% endif %}" disabled>
+                    <label>Nível de risco</label>
+                    <input id="id_nivel_risco_preview" type="text" value="{% if object %}{{ object.nivel_risco }} - {{ object.nivel_risco_display }}{% else %}Calculado automaticamente{% endif %}" disabled>
                 </div>
             </div>
             <div class="field">{{ form.eficacia_controles.label_tag }}{{ form.eficacia_controles }}{{ form.eficacia_controles.errors }}</div>
             <div class="readonly-grid">
                 <div class="field">
-                    <label>Nivel residual</label>
-                    <input type="text" value="{% if object %}{{ object.nivel_residual }}{% else %}Calculado automaticamente{% endif %}" disabled>
+                    <label>Nível residual</label>
+                    <input id="id_nivel_residual_preview" type="text" value="{% if object %}{{ object.nivel_residual }} - {{ object.nivel_residual_display }}{% else %}Calculado automaticamente{% endif %}" disabled>
                 </div>
             </div>
         </section>
@@ -64,8 +64,8 @@
         </section>
 
         <div class="actions form-actions-right">
-            <a class="btn btn-secondary" href="{{ cancel_url }}">Cancelar</a>
-            <button class="btn" type="submit">{{ submit_label }}</button>
+            <a class="btn btn-secondary" href="{{ cancel_url }}"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i>Cancelar</a>
+            <button class="btn" type="submit"><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i>{{ submit_label }}</button>
         </div>
     </form>
 </div>
@@ -112,6 +112,71 @@
         });
 
         renderObjetivos();
+    }());
+
+    (function () {
+        var probabilidade = document.getElementById("id_probabilidade");
+        var impacto = document.getElementById("id_impacto");
+        var eficacia = document.getElementById("id_eficacia_controles");
+        var nivelRisco = document.getElementById("id_nivel_risco_preview");
+        var nivelResidual = document.getElementById("id_nivel_residual_preview");
+
+        if (!probabilidade || !impacto || !eficacia || !nivelRisco || !nivelResidual) {
+            return;
+        }
+
+        var fatores = {
+            INEXISTENTE: 1,
+            FRACA: 0.8,
+            MEDIANA: 0.6,
+            SATISFATORIA: 0.4,
+            FORTE: 0.2
+        };
+
+        function classificarNivel(nivel) {
+            if (nivel < 4) {
+                return "Risco Baixo";
+            }
+            if (nivel < 12) {
+                return "Risco Moderado";
+            }
+            if (nivel < 20) {
+                return "Risco Alto";
+            }
+            return "Risco Extremo";
+        }
+
+        function formatarNivel(nivel) {
+            return nivel + " - " + classificarNivel(nivel);
+        }
+
+        function atualizarPreview() {
+            var probabilidadeValor = Number(probabilidade.value);
+            var impactoValor = Number(impacto.value);
+
+            if (!probabilidadeValor || !impactoValor) {
+                nivelRisco.value = "Calculado automaticamente";
+                nivelResidual.value = "Calculado automaticamente";
+                return;
+            }
+
+            var risco = probabilidadeValor * impactoValor;
+            nivelRisco.value = formatarNivel(risco);
+
+            if (!eficacia.value) {
+                nivelResidual.value = "Selecione a eficácia dos controles";
+                return;
+            }
+
+            var fator = fatores[eficacia.value] || 1;
+            var residual = Math.round(risco * fator);
+            nivelResidual.value = formatarNivel(residual);
+        }
+
+        probabilidade.addEventListener("change", atualizarPreview);
+        impacto.addEventListener("change", atualizarPreview);
+        eficacia.addEventListener("change", atualizarPreview);
+        atualizarPreview();
     }());
 </script>
 {% endblock %}
