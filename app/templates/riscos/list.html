@@ -16,7 +16,7 @@
     {% endif %}
 </div>
 
-<section class="data-card">
+<section class="data-card risk-data-card">
     {% if objects %}
         <div class="data-table-wrap">
             <table class="data-table risk-table">
@@ -25,7 +25,9 @@
                         <th>Unidade</th>
                         <th>Risco identificado</th>
                         <th>Tipo</th>
-                        <th>Situação</th>
+                        <th>Risco</th>
+                        <th>Risco residual</th>
+                        <th>Status</th>
                         <th class="actions-col">Ações</th>
                     </tr>
                 </thead>
@@ -35,6 +37,18 @@
                         <td><strong>{{ obj.unidade.sigla }}</strong></td>
                         <td class="risk-summary" title="{{ obj.risco_identificado }}">{{ obj.risco_identificado|limite_palavras:3 }}</td>
                         <td>{{ obj.get_tipo_risco_display }}</td>
+                        <td>
+                            <span class="risk-score">
+                                <strong>{{ obj.nivel_risco }}</strong>
+                                <small>{{ obj.nivel_risco_display }}</small>
+                            </span>
+                        </td>
+                        <td>
+                            <span class="risk-score">
+                                <strong>{{ obj.nivel_residual }}</strong>
+                                <small>{{ obj.nivel_residual_display }}</small>
+                            </span>
+                        </td>
                         <td><span class="status-pill">{{ obj.get_situacao_display }}</span></td>
                         <td class="table-actions">
                             <div class="table-actions-inner">

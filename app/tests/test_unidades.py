@@ -1,8 +1,42 @@
 import pytest
+from django.contrib.auth import get_user_model
 from django.urls import reverse
 
 from unidades.forms import UnidadeForm
 from unidades.models import TipoUnidade, Unidade
+from usuarios.models import PerfilAcesso, Usuario
+
+
+@pytest.fixture(name="unidade_teste")
+def criar_unidade_teste(db):
+    _ = db
+    unidade, _created = Unidade.objects.get_or_create(
+        sigla="POLI",
+        defaults={
+            "nome": "Politécnico",
+            "tipo_unidade": TipoUnidade.DIRETORIA,
+        },
+    )
+    return unidade
+
+
+@pytest.fixture(name="admin_logado")
+def criar_admin_logado(client, unidade_teste):
+    user = get_user_model().objects.create_user(
+        username="admin-unidades",
+        password="senha-teste",
+        first_name="Admin",
+        last_name="Unidades",
+    )
+    Usuario.objects.create(
+        unidade=unidade_teste,
+        matricula="admin-unidades",
+        nome="Admin Unidades",
+        email="admin.unidades@ufsm.br",
+        perfil_acesso=PerfilAcesso.ADMIN,
+    )
+    client.force_login(user)
+    return user
 
 
 @pytest.mark.django_db
@@ -25,7 +59,8 @@ def test_formulario_exige_sigla_nome_e_tipo():
 
 
 @pytest.mark.django_db
-def test_listagem_exibe_unidades_cadastradas(client):
+def test_listagem_exibe_unidades_cadastradas(client, admin_logado):
+    _ = admin_logado
     Unidade.objects.create(
         sigla="PROPLAN",
         nome="Pro-Reitoria de Planejamento",
@@ -40,7 +75,8 @@ def test_listagem_exibe_unidades_cadastradas(client):
 
 
 @pytest.mark.django_db
-def test_cria_nova_unidade_com_sucesso(client):
+def test_cria_nova_unidade_com_sucesso(client, admin_logado):
+    _ = admin_logado
     dados_da_requisicao = {
         "sigla": "CCSH",
         "nome": "Centro de Ciencias Sociais e Humanas",
@@ -54,7 +90,8 @@ def test_cria_nova_unidade_com_sucesso(client):
 
 
 @pytest.mark.django_db
-def test_recusa_dados_invalidos(client):
+def test_recusa_dados_invalidos(client, admin_logado):
+    _ = admin_logado
     dados_invalidos = {"sigla": "", "nome": "", "tipo_unidade": ""}
 
     response = client.post(reverse("unidade-create"), data=dados_invalidos)

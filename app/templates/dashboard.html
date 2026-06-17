@@ -1,12 +1,12 @@
 ﻿{% extends "base.html" %}
 
-{% block title %}Dashboard | Comandos FE{% endblock %}
+{% block title %}Painel | Comandos FE{% endblock %}
 
 {% block content %}
 <div class="dashboard-hero">
     <div>
         <span class="eyebrow">Visão geral</span>
-        <h1>Dashboard</h1>
+        <h1>Painel</h1>
         <p class="muted">Acompanhe os riscos cadastrados, a distribuição por unidade e a situação dos planos de tratamento.</p>
     </div>
     {% if request.perms_context.is_admin or request.perms_context.can_access_risks %}
@@ -89,16 +89,16 @@
         </div>
     </article>
 
-    <article class="card chart-card">
+    <article class="card chart-card accent-panel span-2">
         <div class="section-head">
             <div>
-                <span class="eyebrow">Acessos</span>
-                <h2>Usuários por perfil</h2>
+                <span class="eyebrow">Unidades</span>
+                <h2>Riscos por unidade</h2>
             </div>
-            <span class="pill">{{ total_usuarios }} usuários</span>
+            <span class="pill">Maior: {{ unidade_com_mais_riscos }}</span>
         </div>
         <div class="bar-list compact-bars">
-            {% for item in usuarios_por_perfil %}
+            {% for item in riscos_por_unidade %}
             <div class="bar-row">
                 <div class="bar-meta">
                     <span>{{ item.label }}</span>
@@ -108,29 +108,8 @@
                     <span style="width: {{ item.percent }}%"></span>
                 </div>
             </div>
-            {% endfor %}
-        </div>
-    </article>
-
-    <article class="card chart-card accent-panel">
-        <div class="section-head">
-            <div>
-                <span class="eyebrow">Estrutura</span>
-                <h2>Unidades por tipo</h2>
-            </div>
-            <span class="pill">{{ total_unidades }} unidades</span>
-        </div>
-        <div class="bar-list compact-bars">
-            {% for item in unidades_por_tipo %}
-            <div class="bar-row">
-                <div class="bar-meta">
-                    <span>{{ item.label }}</span>
-                    <strong>{{ item.total }}</strong>
-                </div>
-                <div class="bar-track" aria-label="{{ item.percent }}%">
-                    <span style="width: {{ item.percent }}%"></span>
-                </div>
-            </div>
+            {% empty %}
+            <p class="muted empty-state">Nenhum risco cadastrado por unidade.</p>
             {% endfor %}
         </div>
     </article>

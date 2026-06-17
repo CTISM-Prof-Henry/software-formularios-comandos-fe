@@ -16,7 +16,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
 from riscos.models import Risco, SituacaoTratamento, TipoRisco
-from unidades.models import TipoUnidade, Unidade
+from unidades.models import Unidade
 from usuarios.forms import AtualizarCadastroForm, CadastroLocalForm
 from usuarios.models import PerfilAcesso, Usuario
 
@@ -55,14 +55,7 @@ def _dashboard_context():
         item["situacao"]: item["total"]
         for item in Risco.objects.values("situacao").annotate(total=Count("id"))
     }
-    perfil_counts = {
-        item["perfil_acesso"]: item["total"]
-        for item in Usuario.objects.values("perfil_acesso").annotate(total=Count("id"))
-    }
-    unidade_counts = {
-        item["tipo_unidade"]: item["total"]
-        for item in Unidade.objects.values("tipo_unidade").annotate(total=Count("id"))
-    }
+    riscos_por_unidade = _risk_unit_series(total_riscos)
 
     media_residual = Risco.objects.aggregate(media=Avg("nivel_residual"))["media"] or 0
 
@@ -81,15 +74,9 @@ def _dashboard_context():
             situacao_counts,
             total_riscos,
         ),
-        "usuarios_por_perfil": _choice_series(
-            PerfilAcesso.choices,
-            perfil_counts,
-            total_usuarios,
-        ),
-        "unidades_por_tipo": _choice_series(
-            TipoUnidade.choices,
-            unidade_counts,
-            total_unidades,
+        "riscos_por_unidade": riscos_por_unidade,
+        "unidade_com_mais_riscos": (
+            riscos_por_unidade[0]["label"] if riscos_por_unidade else "Sem dados"
         ),
         "riscos_recentes": Risco.objects.select_related("unidade")[:5],
         "unidades_recentes": Unidade.objects.select_related("unidade_pai")[:4],
@@ -104,6 +91,25 @@ def _choice_series(choices, counts, total):
             "percent": round((counts.get(value, 0) / total) * 100) if total else 0,
         }
         for value, label in choices
+    ]
+
+
+def _risk_unit_series(total_riscos):
+    riscos_por_unidade = (
+        Risco.objects.values("unidade__sigla", "unidade__nome")
+        .annotate(total=Count("id"))
+        .order_by("-total", "unidade__sigla")
+    )
+    return [
+        {
+            "label": item["unidade__sigla"] or item["unidade__nome"],
+            "description": item["unidade__nome"],
+            "total": item["total"],
+            "percent": round((item["total"] / total_riscos) * 100)
+            if total_riscos
+            else 0,
+        }
+        for item in riscos_por_unidade
     ]
 
 

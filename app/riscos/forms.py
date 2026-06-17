@@ -4,10 +4,29 @@ from .current_user import get_current_user_units
 from .models import Risco
 
 
+PROBABILIDADE_CHOICES = [
+    (1, "1 - Raro"),
+    (2, "2 - Improvável"),
+    (3, "3 - Possível"),
+    (4, "4 - Provável"),
+    (5, "5 - Quase Certo"),
+]
+
+IMPACTO_CHOICES = [
+    (1, "1 - Insignificante"),
+    (2, "2 - Pequeno"),
+    (3, "3 - Moderado"),
+    (4, "4 - Grande"),
+    (5, "5 - Catastrófico"),
+]
+
+
 class RiscoForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["unidade"].queryset = get_current_user_units()
+        self.fields["probabilidade"].choices = PROBABILIDADE_CHOICES
+        self.fields["impacto"].choices = IMPACTO_CHOICES
 
     class Meta:
         model = Risco

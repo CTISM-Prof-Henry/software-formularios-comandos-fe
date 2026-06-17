@@ -571,6 +571,16 @@ tbody tr:nth-child(even) {
     padding: 18px;
 }
 
+.risk-data-card {
+    width: 100%;
+    max-width: none;
+    padding: 14px;
+}
+
+.risk-data-card .data-table-wrap {
+    overflow-x: visible;
+}
+
 .form-card {
     width: min(920px, 100%);
     margin-left: auto;
@@ -616,7 +626,7 @@ tbody tr:nth-child(even) {
 
 .data-table-wrap {
     width: 100%;
-    overflow-x: visible;
+    overflow-x: auto;
 }
 
 .data-table {
@@ -692,27 +702,39 @@ tbody tr:nth-child(even) {
 
 .risk-table th:nth-child(1),
 .risk-table td:nth-child(1) {
-    width: 14%;
+    width: 8%;
 }
 
 .risk-table th:nth-child(2),
 .risk-table td:nth-child(2) {
-    width: 34%;
+    width: 24%;
 }
 
 .risk-table th:nth-child(3),
 .risk-table td:nth-child(3) {
-    width: 18%;
+    width: 12%;
 }
 
 .risk-table th:nth-child(4),
 .risk-table td:nth-child(4) {
-    width: 17%;
+    width: 11%;
 }
 
 .risk-table th:nth-child(5),
 .risk-table td:nth-child(5) {
-    width: 138px;
+    width: 13%;
+}
+
+.risk-table th:nth-child(6),
+.risk-table td:nth-child(6) {
+    width: 13%;
+    padding-right: 10px;
+}
+
+.risk-table th:nth-child(7),
+.risk-table td:nth-child(7) {
+    width: 19%;
+    padding-left: 10px;
 }
 
 .actions-col,
@@ -757,9 +779,14 @@ tbody tr:nth-child(even) {
 }
 
 .risk-table .table-actions-inner {
-    width: 102px;
+    width: auto;
     margin: 0 auto;
-    gap: 6px;
+    gap: 4px;
+}
+
+.risk-table .btn-icon {
+    width: 28px;
+    height: 28px;
 }
 
 .btn-icon {
@@ -835,9 +862,33 @@ tbody tr:nth-child(even) {
     min-width: 0;
 }
 
+.risk-table th,
+.risk-table td {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
 .risk-summary {
     line-height: 1.45;
     white-space: nowrap;
+}
+
+.risk-score {
+    display: grid;
+    gap: 2px;
+    min-width: 0;
+}
+
+.risk-score strong {
+    color: var(--navy-dark);
+    font-size: 18px;
+    line-height: 1;
+}
+
+.risk-score small {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.25;
 }
 
 .detail-page-head {
@@ -1138,7 +1189,7 @@ form p textarea {
     }
 
     .risk-table {
-        min-width: 980px;
+        min-width: 0;
     }
 }
 

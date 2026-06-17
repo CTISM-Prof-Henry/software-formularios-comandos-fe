@@ -126,9 +126,13 @@ def test_usuario_com_gestao_visualiza_inicio_e_riscos(
 ):
     inicio_response = cliente_gestao.get(reverse("index"))
     riscos_response = cliente_gestao.get(reverse("risco-list"))
+    html = riscos_response.content.decode()
 
     assert inicio_response.status_code == 200
     assert riscos_response.status_code == 200
+    assert "Risco residual" in html
+    assert "Risco Moderado" in html
+    assert "Risco Baixo" in html
     assert "Risco da própria" in riscos_response.content.decode()
     assert "Risco da unidade" in riscos_response.content.decode()
     assert "Risco de outra" in riscos_response.content.decode()
@@ -179,6 +183,76 @@ def test_usuario_visualiza_impressao_de_outra_unidade_mas_nao_edita(
 
     assert print_response.status_code == 200
     assert edit_response.status_code == 403
+
+
+@pytest.mark.django_db
+def test_admin_pode_editar_risco_de_qualquer_unidade(client, cenario_riscos):
+    criar_usuario_logado(
+        client,
+        cenario_riscos["unidade_usuario"],
+        "admin-riscos",
+        perfil_acesso=PerfilAcesso.ADMIN,
+    )
+    risco_outra_unidade = cenario_riscos["risco_outra_unidade"]
+
+    response = client.post(
+        reverse("risco-update", kwargs={"pk": risco_outra_unidade.pk}),
+        {
+            "unidade": cenario_riscos["outra_unidade"].pk,
+            "tipo_risco": risco_outra_unidade.tipo_risco,
+            "desafio": risco_outra_unidade.desafio.pk,
+            "objetivo": risco_outra_unidade.objetivo.pk,
+            "macroprocesso": risco_outra_unidade.macroprocesso.pk,
+            "risco_identificado": "Risco de outra unidade atualizado por admin",
+            "probabilidade": risco_outra_unidade.probabilidade,
+            "impacto": risco_outra_unidade.impacto,
+            "eficacia_controles": risco_outra_unidade.eficacia_controles,
+            "resposta": risco_outra_unidade.resposta,
+            "acao": risco_outra_unidade.acao,
+            "data_inicio": risco_outra_unidade.data_inicio,
+            "data_fim": risco_outra_unidade.data_fim,
+            "situacao": risco_outra_unidade.situacao,
+        },
+    )
+
+    risco_outra_unidade.refresh_from_db()
+    assert response.status_code == 302
+    assert (
+        risco_outra_unidade.risco_identificado
+        == "Risco de outra unidade atualizado por admin"
+    )
+
+
+@pytest.mark.django_db
+def test_unidade_pai_pode_editar_risco_da_unidade_filha(
+    cliente_gestao,
+    cenario_riscos,
+):
+    risco_filha = cenario_riscos["risco_filha"]
+
+    response = cliente_gestao.post(
+        reverse("risco-update", kwargs={"pk": risco_filha.pk}),
+        {
+            "unidade": cenario_riscos["unidade_filha"].pk,
+            "tipo_risco": risco_filha.tipo_risco,
+            "desafio": risco_filha.desafio.pk,
+            "objetivo": risco_filha.objetivo.pk,
+            "macroprocesso": risco_filha.macroprocesso.pk,
+            "risco_identificado": "Risco da unidade filha atualizado",
+            "probabilidade": risco_filha.probabilidade,
+            "impacto": risco_filha.impacto,
+            "eficacia_controles": risco_filha.eficacia_controles,
+            "resposta": risco_filha.resposta,
+            "acao": risco_filha.acao,
+            "data_inicio": risco_filha.data_inicio,
+            "data_fim": risco_filha.data_fim,
+            "situacao": risco_filha.situacao,
+        },
+    )
+
+    risco_filha.refresh_from_db()
+    assert response.status_code == 302
+    assert risco_filha.risco_identificado == "Risco da unidade filha atualizado"
 
 
 @pytest.mark.django_db

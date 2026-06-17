@@ -3,6 +3,7 @@ from uuid import uuid4
 
 import pytest
 
+from riscos.forms import RiscoForm
 from riscos.models import (
     AcaoTratamento,
     Desafio,
@@ -77,3 +78,23 @@ def test_classifica_niveis_conforme_faixas_da_planilha():
     assert Risco.classificar_nivel(4) == "Risco Moderado"
     assert Risco.classificar_nivel(12) == "Risco Alto"
     assert Risco.classificar_nivel(20) == "Risco Extremo"
+
+
+@pytest.mark.django_db
+def test_formulario_exibe_escalas_especificas_de_probabilidade_e_impacto():
+    form = RiscoForm()
+
+    assert list(form.fields["probabilidade"].choices) == [
+        (1, "1 - Raro"),
+        (2, "2 - Improvável"),
+        (3, "3 - Possível"),
+        (4, "4 - Provável"),
+        (5, "5 - Quase Certo"),
+    ]
+    assert list(form.fields["impacto"].choices) == [
+        (1, "1 - Insignificante"),
+        (2, "2 - Pequeno"),
+        (3, "3 - Moderado"),
+        (4, "4 - Grande"),
+        (5, "5 - Catastrófico"),
+    ]

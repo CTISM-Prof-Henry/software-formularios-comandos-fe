@@ -54,6 +54,9 @@ def get_current_user_department():
 
 
 def get_current_user_units():
+    if _current_user_is_admin():
+        return Unidade.objects.all().order_by("sigla")
+
     departamento = get_current_user_department()
     if not departamento:
         return Unidade.objects.none()
@@ -61,6 +64,9 @@ def get_current_user_units():
 
 
 def get_current_user_unit_ids():
+    if _current_user_is_admin():
+        return list(Unidade.objects.values_list("id", flat=True))
+
     departamento = get_current_user_department()
     if not departamento:
         return []
@@ -82,7 +88,30 @@ def get_current_user_unit_ids():
 
 
 def user_can_manage_risco(risco):
-    return risco.unidade_id in get_current_user_unit_ids()
+    if _current_user_is_admin():
+        return True
+
+    departamento = get_current_user_department()
+    if not departamento:
+        return False
+
+    unidade = risco.unidade
+    while unidade:
+        if unidade.id == departamento.id:
+            return True
+        unidade = unidade.unidade_pai
+    return False
+
+
+def _current_user_is_admin():
+    request = get_current_request()
+    if not request or not request.user.is_authenticated:
+        return False
+
+    from gestao_riscos.permissions import is_admin
+
+    usuario = getattr(request, "current_usuario", None)
+    return is_admin(request.user, usuario=usuario)
 
 
 def _get_default_department():
